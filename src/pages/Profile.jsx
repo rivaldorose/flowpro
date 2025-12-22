@@ -1,0 +1,226 @@
+import React, { useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { base44 } from '@/api/base44Client';
+import { User, Mail, Phone, Briefcase, Camera, Save, Loader2 } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import { toast } from "sonner";
+
+export default function Profile() {
+  const queryClient = useQueryClient();
+  const [uploading, setUploading] = useState(false);
+  const [formData, setFormData] = useState({
+    full_name: '',
+    phone: '',
+    job_title: '',
+    photo: ''
+  });
+
+  const { data: currentUser, isLoading } = useQuery({
+    queryKey: ['currentUser'],
+    queryFn: () => base44.auth.me(),
+  });
+
+  React.useEffect(() => {
+    if (currentUser) {
+      setFormData({
+        full_name: currentUser.full_name || '',
+        phone: currentUser.phone || '',
+        job_title: currentUser.job_title || '',
+        photo: currentUser.photo || ''
+      });
+    }
+  }, [currentUser]);
+
+  const updateMutation = useMutation({
+    mutationFn: (data) => base44.auth.updateMe(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['currentUser'] });
+      toast.success('Profiel succesvol bijgewerkt');
+    },
+  });
+
+  const handlePhotoUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    try {
+      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      setFormData(prev => ({ ...prev, photo: file_url }));
+      toast.success('Foto geüpload');
+    } catch (error) {
+      toast.error('Kon foto niet uploaden');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    updateMutation.mutate(formData);
+  };
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <Skeleton className="h-12 w-64 bg-[#22262b]" />
+        <Skeleton className="h-96 bg-[#22262b]" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="max-w-3xl mx-auto space-y-6">
+      {/* Header */}
+      <div>
+        <h1 className="text-2xl lg:text-3xl font-bold text-white">Mijn Profiel</h1>
+        <p className="text-gray-500 mt-1">Beheer je persoonlijke informatie</p>
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Profile Card */}
+        <div className="bg-[#22262b] rounded-2xl p-8 border border-gray-800/50">
+          {/* Photo Section */}
+          <div className="flex flex-col md:flex-row items-start gap-8 mb-8">
+            <div className="relative">
+              <div className="w-32 h-32 rounded-full overflow-hidden bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+                {formData.photo ? (
+                  <img src={formData.photo} alt="Profiel" className="w-full h-full object-cover" />
+                ) : (
+                  <User className="w-16 h-16 text-white" />
+                )}
+              </div>
+              <label htmlFor="photo-upload" className="absolute bottom-0 right-0 w-10 h-10 bg-emerald-500 hover:bg-emerald-600 rounded-full flex items-center justify-center cursor-pointer transition-colors">
+                {uploading ? (
+                  <Loader2 className="w-5 h-5 text-white animate-spin" />
+                ) : (
+                  <Camera className="w-5 h-5 text-white" />
+                )}
+              </label>
+              <input
+                id="photo-upload"
+                type="file"
+                accept="image/*"
+                onChange={handlePhotoUpload}
+                className="hidden"
+                disabled={uploading}
+              />
+            </div>
+
+            <div className="flex-1">
+              <h2 className="text-2xl font-bold text-white mb-2">{currentUser?.full_name}</h2>
+              <div className="flex items-center gap-2 mb-4">
+                <Badge variant="outline" className="border-emerald-500/30 text-emerald-400 bg-emerald-500/10">
+                  {currentUser?.role === 'admin' ? 'Administrator' : 'Gebruiker'}
+                </Badge>
+              </div>
+              <p className="text-gray-400 text-sm">
+                Lid sinds {new Date(currentUser?.created_date).toLocaleDateString('nl-NL', { year: 'numeric', month: 'long' })}
+              </p>
+            </div>
+          </div>
+
+          {/* Form Fields */}
+          <div className="space-y-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div className="space-y-2">
+                <Label className="text-gray-300">
+                  <User className="w-4 h-4 inline mr-2" />
+                  Volledige Naam *
+                </Label>
+                <Input
+                  value={formData.full_name}
+                  onChange={(e) => setFormData(prev => ({ ...prev, full_name: e.target.value }))}
+                  className="bg-[#1a1d21] border-gray-700 text-white"
+                  placeholder="Jouw naam"
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-gray-300">
+                  <Mail className="w-4 h-4 inline mr-2" />
+                  E-mailadres
+                </Label>
+                <Input
+                  value={currentUser?.email}
+                  className="bg-[#1a1d21] border-gray-700 text-gray-500"
+                  disabled
+                />
+                <p className="text-xs text-gray-600">E-mail kan niet worden gewijzigd</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div className="space-y-2">
+                <Label className="text-gray-300">
+                  <Phone className="w-4 h-4 inline mr-2" />
+                  Telefoonnummer
+                </Label>
+                <Input
+                  value={formData.phone}
+                  onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
+                  className="bg-[#1a1d21] border-gray-700 text-white"
+                  placeholder="+31 6 1234 5678"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-gray-300">
+                  <Briefcase className="w-4 h-4 inline mr-2" />
+                  Functie
+                </Label>
+                <Input
+                  value={formData.job_title}
+                  onChange={(e) => setFormData(prev => ({ ...prev, job_title: e.target.value }))}
+                  className="bg-[#1a1d21] border-gray-700 text-white"
+                  placeholder="Bijv. Producer, Editor"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Actions */}
+        <div className="flex justify-end">
+          <Button 
+            type="submit" 
+            disabled={updateMutation.isPending}
+            className="bg-emerald-500 hover:bg-emerald-600 gap-2"
+          >
+            {updateMutation.isPending ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                Opslaan...
+              </>
+            ) : (
+              <>
+                <Save className="w-4 h-4" />
+                Profiel Opslaan
+              </>
+            )}
+          </Button>
+        </div>
+      </form>
+
+      {/* Logout Section */}
+      <div className="bg-gradient-to-br from-red-500/10 to-orange-500/10 rounded-2xl p-6 border border-red-500/20">
+        <h3 className="text-lg font-semibold text-white mb-2">Uitloggen</h3>
+        <p className="text-gray-400 text-sm mb-4">
+          Je wordt uitgelogd en teruggestuurd naar het inlogscherm.
+        </p>
+        <Button 
+          variant="outline" 
+          onClick={() => base44.auth.logout()}
+          className="border-red-500/30 text-red-400 hover:bg-red-500/10"
+        >
+          Uitloggen
+        </Button>
+      </div>
+    </div>
+  );
+}
