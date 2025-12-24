@@ -5,9 +5,10 @@ import Placeholder from '@tiptap/extension-placeholder';
 import CharacterCount from '@tiptap/extension-character-count';
 import { 
   Bold, Italic, Underline, List, ListOrdered, 
-  Heading1, Heading2, Heading3, Quote, Code, Undo, Redo
+  Heading1, Heading2, Heading3, Quote, Code, Undo, Redo, Users
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { supabase } from '@/lib/supabase';
 
 const MenuBar = ({ editor }) => {
   if (!editor) {
@@ -137,7 +138,17 @@ const MenuBar = ({ editor }) => {
   );
 };
 
-export default function ScriptEditor({ content, onChange, placeholder = "Start writing your script..." }) {
+export default function ScriptEditor({ 
+  content, 
+  onChange, 
+  placeholder = "Start writing your script...",
+  scriptId,
+  currentUserId 
+}) {
+  const [isRemoteUpdate, setIsRemoteUpdate] = React.useState(false);
+  const [activeUsers, setActiveUsers] = React.useState([]);
+  const lastUpdateRef = React.useRef(Date.now());
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -152,7 +163,10 @@ export default function ScriptEditor({ content, onChange, placeholder = "Start w
     ],
     content,
     onUpdate: ({ editor }) => {
-      onChange(editor.getHTML());
+      const newContent = editor.getHTML();
+      lastUpdateRef.current = Date.now();
+      setIsRemoteUpdate(false);
+      onChange(newContent);
     },
     editorProps: {
       attributes: {
@@ -161,18 +175,117 @@ export default function ScriptEditor({ content, onChange, placeholder = "Start w
     },
   });
 
+  // Supabase Realtime subscription for script updates
   React.useEffect(() => {
-    if (editor && content !== editor.getHTML()) {
+    if (!scriptId || !editor) return;
+
+    // Subscribe to changes in the scripts table
+    const channel = supabase
+      .channel(`script-${scriptId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'scripts',
+          filter: `id=eq.${scriptId}`,
+        },
+        (payload) => {
+          // Check if this update is from another user (not our own update)
+          const updateTime = new Date(payload.new.updated_date || payload.commit_timestamp).getTime();
+          
+          // Only update if it's a remote change (not our own recent update)
+          if (updateTime > lastUpdateRef.current + 1000) {
+            const newContent = payload.new.content || '';
+            
+            // Only update if content is different to avoid infinite loops
+            if (newContent !== editor.getHTML()) {
+              setIsRemoteUpdate(true);
+              editor.commands.setContent(newContent, false);
+              
+              // Reset flag after a short delay
+              setTimeout(() => setIsRemoteUpdate(false), 500);
+            }
+          }
+        }
+      )
+      .on(
+        'presence',
+        {
+          event: 'sync',
+        },
+        () => {
+          const state = channel.presenceState();
+          const users = Object.values(state).flat().map((presence) => presence.user_id);
+          setActiveUsers(users.filter(id => id !== currentUserId));
+        }
+      )
+      .on(
+        'presence',
+        {
+          event: 'join',
+        },
+        ({ key, newPresences }) => {
+          const userId = newPresences[0]?.user_id;
+          if (userId && userId !== currentUserId) {
+            setActiveUsers(prev => [...prev.filter(id => id !== userId), userId]);
+          }
+        }
+      )
+      .on(
+        'presence',
+        {
+          event: 'leave',
+        },
+        ({ key, leftPresences }) => {
+          const userId = leftPresences[0]?.user_id;
+          if (userId) {
+            setActiveUsers(prev => prev.filter(id => id !== userId));
+          }
+        }
+      )
+      .subscribe(async (status) => {
+        if (status === 'SUBSCRIBED') {
+          // Track presence when joining
+          await channel.track({
+            user_id: currentUserId,
+            online_at: new Date().toISOString(),
+          });
+        }
+      });
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [scriptId, editor, currentUserId]);
+
+  React.useEffect(() => {
+    if (editor && content !== editor.getHTML() && !isRemoteUpdate) {
       editor.commands.setContent(content || '');
     }
-  }, [content, editor]);
+  }, [content, editor, isRemoteUpdate]);
 
   if (!editor) {
     return null;
   }
 
   return (
-    <div className="border border-gray-200 rounded-lg bg-white overflow-hidden">
+    <div className="border border-gray-200 rounded-lg bg-white overflow-hidden relative">
+      {/* Active Users Indicator */}
+      {activeUsers.length > 0 && (
+        <div className="absolute top-2 right-2 z-10 flex items-center gap-2 bg-purple-50 border border-purple-200 rounded-full px-3 py-1.5 text-xs text-purple-700">
+          <Users className="w-3.5 h-3.5" />
+          <span>{activeUsers.length} {activeUsers.length === 1 ? 'person' : 'people'} editing</span>
+        </div>
+      )}
+      
+      {/* Remote Update Indicator */}
+      {isRemoteUpdate && (
+        <div className="absolute top-2 left-2 z-10 bg-blue-50 border border-blue-200 rounded-full px-3 py-1.5 text-xs text-blue-700 animate-pulse">
+          Updating from another user...
+        </div>
+      )}
+      
       <MenuBar editor={editor} />
       <EditorContent 
         editor={editor}

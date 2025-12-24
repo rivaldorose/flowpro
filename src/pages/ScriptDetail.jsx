@@ -324,6 +324,8 @@ export default function ScriptDetail() {
                       setEditorContent(html);
                     }}
                     placeholder="Start writing your script..."
+                    scriptId={scriptId}
+                    currentUserId={currentUser?.id || currentUser?.email}
                   />
                 ) : (
                   <div 
