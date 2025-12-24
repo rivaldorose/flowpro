@@ -7,13 +7,13 @@ import { format } from 'date-fns';
 import { nl } from 'date-fns/locale';
 
 const statusColors = {
-  'Idea': 'bg-gray-500/20 text-gray-400 border-gray-500/30',
-  'Script Writing': 'bg-sky-500/20 text-sky-400 border-sky-500/30',
-  'Pre-Production': 'bg-blue-500/20 text-blue-400 border-blue-500/30',
-  'Production': 'bg-orange-500/20 text-orange-400 border-orange-500/30',
-  'Post-Production': 'bg-purple-500/20 text-purple-400 border-purple-500/30',
-  'Done': 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30',
-  'Published': 'bg-green-600/20 text-green-400 border-green-500/30',
+  'Idea': 'bg-gray-100 text-gray-700 border-gray-200',
+  'Script Writing': 'bg-sky-100 text-sky-700 border-sky-200',
+  'Pre-Production': 'bg-blue-100 text-blue-700 border-blue-200',
+  'Production': 'bg-orange-100 text-orange-700 border-orange-200',
+  'Post-Production': 'bg-purple-100 text-purple-700 border-purple-200',
+  'Done': 'bg-emerald-100 text-emerald-700 border-emerald-200',
+  'Published': 'bg-green-100 text-green-700 border-green-200',
 };
 
 const platformIcons = {
@@ -36,16 +36,16 @@ export default function ProjectCard({ project, business }) {
   return (
     <Link 
       to={createPageUrl(`ProjectDetail?id=${project.id}`)}
-      className="block bg-[#22262b] rounded-2xl p-5 border border-gray-800/50 hover:border-gray-700/50 hover:bg-[#262a30] transition-all duration-300 group"
+      className="block bg-white rounded-xl p-5 border border-gray-200 hover:border-emerald-300 hover:shadow-md transition-all duration-300 group"
     >
       <div className="flex items-start justify-between mb-4">
         <div className="flex-1 min-w-0">
-          <h3 className="font-semibold text-white truncate group-hover:text-emerald-400 transition-colors">
+          <h3 className="font-semibold text-gray-900 truncate group-hover:text-emerald-600 transition-colors">
             {project.title}
           </h3>
-          <p className="text-sm text-gray-500 truncate">{business?.name || 'Geen business'}</p>
+          <p className="text-sm text-gray-600 truncate">{business?.name || 'Geen business'}</p>
         </div>
-        <ChevronRight className="w-5 h-5 text-gray-600 group-hover:text-emerald-400 transition-colors flex-shrink-0" />
+        <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-emerald-600 transition-colors flex-shrink-0" />
       </div>
 
       {/* Platforms */}
@@ -53,7 +53,7 @@ export default function ProjectCard({ project, business }) {
         {project.platforms?.map((platform) => (
           <span 
             key={platform} 
-            className="text-xs bg-gray-700/50 px-2 py-1 rounded-lg"
+            className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-lg border border-gray-200"
             title={platform}
           >
             {platformIcons[platform] || '📱'} {platform}
@@ -70,7 +70,7 @@ export default function ProjectCard({ project, business }) {
 
       {/* Progress bar */}
       <div className="mb-3">
-        <div className="h-1.5 bg-gray-700 rounded-full overflow-hidden">
+        <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
           <div 
             className="h-full bg-gradient-to-r from-emerald-500 to-emerald-400 rounded-full transition-all duration-500"
             style={{ width: `${getStatusProgress(project.status)}%` }}
@@ -80,7 +80,7 @@ export default function ProjectCard({ project, business }) {
 
       {/* Due date */}
       {project.due_date && (
-        <div className="flex items-center gap-2 text-sm text-gray-500">
+        <div className="flex items-center gap-2 text-sm text-gray-600">
           <Calendar className="w-4 h-4" />
           <span>{format(new Date(project.due_date), 'd MMM yyyy', { locale: nl })}</span>
         </div>
