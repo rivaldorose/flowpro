@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { User } from '@/api/entities';
 import { UploadFile } from '@/api/integrations';
 import { supabase } from '@/lib/supabase';
+import { useNavigate } from 'react-router-dom';
 
 /**
  * Profile Setup - Mandatory profile creation page
@@ -11,14 +12,61 @@ import { supabase } from '@/lib/supabase';
  */
 export default function ProfileSetup() {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const [uploading, setUploading] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [checkingSession, setCheckingSession] = useState(true);
   const [formData, setFormData] = useState({
     full_name: '',
     job_title: '',
     photo: ''
   });
+
+  // Check if user is authenticated on mount
+  useEffect(() => {
+    const checkSession = async () => {
+      try {
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        
+        // #region agent log
+        fetch('http://127.0.0.1:7244/ingest/0a454eb1-d3d1-4c43-8c8e-e087d82e49ee',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'ProfileSetup.jsx:33',message:'Initial session check on mount',data:{hasSession:!!session,hasError:!!sessionError,sessionError:sessionError?.message},timestamp:Date.now(),sessionId:'debug-session',runId:'pre-fix',hypothesisId:'H'})}).catch(()=>{});
+        // #endregion
+
+        if (!session || sessionError) {
+          // No session - redirect to signin
+          navigate('/signin', { replace: true });
+          return;
+        }
+
+        // Get user to pre-fill form if profile exists
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          // Try to get existing profile data
+          const { data: existingProfile } = await supabase
+            .from('users')
+            .select('full_name, job_title, avatar_url')
+            .eq('id', user.id)
+            .single();
+
+          if (existingProfile) {
+            setFormData({
+              full_name: existingProfile.full_name || '',
+              job_title: existingProfile.job_title || '',
+              photo: existingProfile.avatar_url || ''
+            });
+          }
+        }
+
+        setCheckingSession(false);
+      } catch (err) {
+        console.error('Session check error:', err);
+        navigate('/signin', { replace: true });
+      }
+    };
+
+    checkSession();
+  }, [navigate]);
 
   const updateMutation = useMutation({
     mutationFn: async (data) => {
@@ -165,6 +213,20 @@ export default function ProfileSetup() {
     setLoading(true);
     updateMutation.mutate(formData);
   };
+
+  // Show loading while checking session
+  if (checkingSession) {
+    return (
+      <div className="min-h-screen bg-[#FAFAF9] flex items-center justify-center">
+        <div className="text-center">
+          <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" width="40" height="40" viewBox="0 0 24 24" className="text-[#6B46C1] animate-spin mx-auto mb-4">
+            <path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12a9 9 0 1 1-6.219-8.56"></path>
+          </svg>
+          <p className="text-[#78716C]">Checking authentication...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#FAFAF9] font-sans selection:bg-[#6B46C1] selection:text-white flex overflow-hidden">
