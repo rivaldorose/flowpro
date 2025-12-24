@@ -84,6 +84,24 @@ export default function ScriptDetail() {
     return parseScriptIntoScenes(script?.content || '');
   }, [script?.content]);
 
+  // Initialize editor content
+  React.useEffect(() => {
+    if (script?.content && !editorContent) {
+      setEditorContent(script.content);
+    }
+  }, [script?.content]);
+
+  // Auto-save after 2 seconds of inactivity
+  React.useEffect(() => {
+    if (!isEditing || !editorContent || !scriptId) return;
+    
+    const timeoutId = setTimeout(() => {
+      updateMutation.mutate({ content: editorContent });
+    }, 2000);
+    
+    return () => clearTimeout(timeoutId);
+  }, [editorContent, isEditing, scriptId]);
+
   // Calculate stats
   const wordCount = script?.content ? script.content.split(/\s+/).length : 0;
   const pageCount = Math.ceil(wordCount / 250); // Rough estimate: 250 words per page
