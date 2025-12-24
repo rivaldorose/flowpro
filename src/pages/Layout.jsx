@@ -85,8 +85,8 @@ export default function Layout({ children, currentPageName }) {
     window.dispatchEvent(new CustomEvent('businessChanged', { detail: selectedBusiness }));
   }, [selectedBusiness]);
 
-  // Hide sidebar and header for Dashboard page
-  if (currentPageName === 'Dashboard') {
+  // Hide sidebar and header for Dashboard and ScriptDetail pages
+  if (currentPageName === 'Dashboard' || currentPageName === 'ScriptDetail') {
     return (
       <div className="min-h-screen">
         {children}
