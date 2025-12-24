@@ -18,7 +18,7 @@ import ScriptBreakdown from '../components/script/ScriptBreakdown';
 const parseScriptIntoScenes = (content) => {
   if (!content) return [];
   
-  const sceneRegex = /(?:^|\n)(\d+\.\s*)?(INT\.|EXT\.|INT/EXT\.)\s+([^-]+?)\s*-\s*([A-Z\s]+)/gim;
+    const sceneRegex = /(?:^|\n)(\d+\.\s*)?(INT\.|EXT\.|INT\/EXT\.)\s+([^-]+?)\s*-\s*([A-Z\s]+)/gim;
   const scenes = [];
   let match;
   let sceneNumber = 1;
