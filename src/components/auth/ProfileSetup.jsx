@@ -34,12 +34,15 @@ export default function ProfileSetup() {
         throw new Error('Je bent niet ingelogd. Log opnieuw in.');
       }
 
-      // Check if profile exists
-      const { data: existingProfile } = await supabase
+      // Check if profile exists (don't throw error if not found, that's ok)
+      const { data: existingProfile, error: checkError } = await supabase
         .from('users')
         .select('id')
         .eq('id', user.id)
         .single();
+      
+      // Ignore "not found" errors - that's expected for new users
+      const profileExists = existingProfile && !checkError;
 
       const userData = {
         id: user.id,
@@ -50,7 +53,7 @@ export default function ProfileSetup() {
       };
 
       let profile;
-      if (existingProfile) {
+      if (profileExists) {
         // Update existing
         const { data: updated, error: updateError } = await supabase
           .from('users')
@@ -63,7 +66,10 @@ export default function ProfileSetup() {
           .select()
           .single();
         
-        if (updateError) throw updateError;
+        if (updateError) {
+          console.error('Update error:', updateError);
+          throw new Error(updateError.message || 'Kon profiel niet bijwerken');
+        }
         profile = updated;
       } else {
         // Create new
@@ -73,7 +79,10 @@ export default function ProfileSetup() {
           .select()
           .single();
         
-        if (createError) throw createError;
+        if (createError) {
+          console.error('Create error:', createError);
+          throw new Error(createError.message || 'Kon profiel niet aanmaken');
+        }
         profile = created;
       }
 
@@ -95,7 +104,8 @@ export default function ProfileSetup() {
     },
     onError: (error) => {
       console.error('Profile update error:', error);
-      setError(error.message || 'Kon profiel niet opslaan. Probeer het opnieuw.');
+      const errorMessage = error.message || error.toString() || 'Kon profiel niet opslaan. Probeer het opnieuw.';
+      setError(errorMessage);
       setLoading(false);
     },
   });
