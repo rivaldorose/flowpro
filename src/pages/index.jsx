@@ -38,6 +38,10 @@ import Storyboard from "./Storyboard";
 
 import ProductionPlanning from "./ProductionPlanning";
 
+import TeamMembers from "./TeamMembers";
+
+import Equipment from "./Equipment";
+
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 
 const PAGES = {
@@ -79,6 +83,10 @@ const PAGES = {
     Storyboard: Storyboard,
     
     ProductionPlanning: ProductionPlanning,
+    
+    TeamMembers: TeamMembers,
+    
+    Equipment: Equipment,
     
 }
 
@@ -144,6 +152,14 @@ function PagesContent() {
                 <Route path="/Storyboard" element={<Storyboard />} />
                 
                 <Route path="/ProductionPlanning" element={<ProductionPlanning />} />
+                
+                <Route path="/TeamMembers" element={<TeamMembers />} />
+                
+                <Route path="/settings/team" element={<TeamMembers />} />
+                
+                <Route path="/Equipment" element={<Equipment />} />
+                
+                <Route path="/ProductionPlanning/Equipment" element={<Equipment />} />
                 
             </Routes>
         </Layout>
