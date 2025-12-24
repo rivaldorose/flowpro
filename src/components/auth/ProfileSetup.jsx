@@ -28,10 +28,6 @@ export default function ProfileSetup() {
     const checkSession = async () => {
       try {
         const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-        
-        // #region agent log
-        fetch('http://127.0.0.1:7244/ingest/0a454eb1-d3d1-4c43-8c8e-e087d82e49ee',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'ProfileSetup.jsx:33',message:'Initial session check on mount',data:{hasSession:!!session,hasError:!!sessionError,sessionError:sessionError?.message},timestamp:Date.now(),sessionId:'debug-session',runId:'pre-fix',hypothesisId:'H'})}).catch(()=>{});
-        // #endregion
 
         if (!session || sessionError) {
           // No session - redirect to signin
@@ -70,22 +66,8 @@ export default function ProfileSetup() {
 
   const updateMutation = useMutation({
     mutationFn: async (data) => {
-      // #region agent log
-      fetch('http://127.0.0.1:7244/ingest/0a454eb1-d3d1-4c43-8c8e-e087d82e49ee',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'ProfileSetup.jsx:25',message:'Starting profile update',data:{hasData:!!data,fullName:data?.full_name},timestamp:Date.now(),sessionId:'debug-session',runId:'pre-fix',hypothesisId:'A'})}).catch(()=>{});
-      // #endregion
-
-      // Check session first
-      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-      // #region agent log
-      fetch('http://127.0.0.1:7244/ingest/0a454eb1-d3d1-4c43-8c8e-e087d82e49ee',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'ProfileSetup.jsx:30',message:'Session check result',data:{hasSession:!!sessionData?.session,hasError:!!sessionError,sessionError:sessionError?.message},timestamp:Date.now(),sessionId:'debug-session',runId:'pre-fix',hypothesisId:'B'})}).catch(()=>{});
-      // #endregion
-
       // Get current user
       const { data: { user }, error: userError } = await supabase.auth.getUser();
-      // #region agent log
-      fetch('http://127.0.0.1:7244/ingest/0a454eb1-d3d1-4c43-8c8e-e087d82e49ee',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'ProfileSetup.jsx:35',message:'GetUser result',data:{hasUser:!!user,userId:user?.id,hasError:!!userError,userError:userError?.message},timestamp:Date.now(),sessionId:'debug-session',runId:'pre-fix',hypothesisId:'C'})}).catch(()=>{});
-      // #endregion
-
       if (userError) {
         console.error('Auth error:', userError);
         throw new Error('Authenticatie fout: ' + userError.message);
@@ -94,20 +76,12 @@ export default function ProfileSetup() {
         throw new Error('Je bent niet ingelogd. Log opnieuw in.');
       }
 
-      // #region agent log
-      fetch('http://127.0.0.1:7244/ingest/0a454eb1-d3d1-4c43-8c8e-e087d82e49ee',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'ProfileSetup.jsx:45',message:'Before checking existing profile',data:{userId:user.id},timestamp:Date.now(),sessionId:'debug-session',runId:'pre-fix',hypothesisId:'D'})}).catch(()=>{});
-      // #endregion
-
       // Check if profile exists (don't throw error if not found, that's ok)
       const { data: existingProfile, error: checkError } = await supabase
         .from('users')
         .select('id')
         .eq('id', user.id)
         .single();
-      
-      // #region agent log
-      fetch('http://127.0.0.1:7244/ingest/0a454eb1-d3d1-4c43-8c8e-e087d82e49ee',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'ProfileSetup.jsx:54',message:'Profile check result',data:{profileExists:!!existingProfile,hasError:!!checkError,errorCode:checkError?.code,errorMessage:checkError?.message},timestamp:Date.now(),sessionId:'debug-session',runId:'pre-fix',hypothesisId:'E'})}).catch(()=>{});
-      // #endregion
       
       // Ignore "not found" errors - that's expected for new users
       const profileExists = existingProfile && !checkError;
@@ -140,20 +114,12 @@ export default function ProfileSetup() {
         }
         profile = updated;
       } else {
-        // #region agent log
-        fetch('http://127.0.0.1:7244/ingest/0a454eb1-d3d1-4c43-8c8e-e087d82e49ee',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'ProfileSetup.jsx:75',message:'Attempting to create profile',data:{userDataKeys:Object.keys(userData)},timestamp:Date.now(),sessionId:'debug-session',runId:'pre-fix',hypothesisId:'F'})}).catch(()=>{});
-        // #endregion
-
         // Create new
         const { data: created, error: createError } = await supabase
           .from('users')
           .insert(userData)
           .select()
           .single();
-        
-        // #region agent log
-        fetch('http://127.0.0.1:7244/ingest/0a454eb1-d3d1-4c43-8c8e-e087d82e49ee',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'ProfileSetup.jsx:84',message:'Profile create result',data:{created:!!created,hasError:!!createError,errorCode:createError?.code,errorMessage:createError?.message,errorDetails:createError?.details},timestamp:Date.now(),sessionId:'debug-session',runId:'pre-fix',hypothesisId:'G'})}).catch(()=>{});
-        // #endregion
         
         if (createError) {
           console.error('Create error:', createError);
