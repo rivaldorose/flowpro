@@ -15,7 +15,6 @@ export default function ProfileSetup() {
   const [error, setError] = useState('');
   const [formData, setFormData] = useState({
     full_name: '',
-    phone: '',
     job_title: '',
     photo: ''
   });
@@ -210,20 +209,6 @@ export default function ProfileSetup() {
                   onChange={(e) => setFormData(prev => ({ ...prev, job_title: e.target.value }))}
                   className="block w-full px-4 py-3 rounded-lg border border-gray-200 text-[#1F2937] placeholder-gray-400 focus:outline-none focus:border-[#6B46C1] focus:ring-1 focus:ring-[#6B46C1] transition-all sm:text-sm"
                   placeholder="Producer, Editor, Director..."
-                />
-              </div>
-
-              {/* Phone */}
-              <div className="space-y-1.5">
-                <label htmlFor="phone" className="block text-sm font-medium text-[#1F2937]">Phone Number</label>
-                <input
-                  type="tel"
-                  id="phone"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
-                  className="block w-full px-4 py-3 rounded-lg border border-gray-200 text-[#1F2937] placeholder-gray-400 focus:outline-none focus:border-[#6B46C1] focus:ring-1 focus:ring-[#6B46C1] transition-all sm:text-sm"
-                  placeholder="+31 6 1234 5678"
                 />
               </div>
 
