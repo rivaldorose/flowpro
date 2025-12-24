@@ -38,15 +38,22 @@ git commit -m "Initial commit: Migrate from Base44 to Supabase"
 ## Stap 4: Repository Koppelen
 
 ```bash
-# Vervang YOUR_USERNAME en REPO_NAME met je eigen waarden
-git remote add origin https://github.com/YOUR_USERNAME/REPO_NAME.git
+# Jouw repository URL:
+git remote add origin https://github.com/rivaldorose/flowpro.git
 
 # Of met SSH (als je SSH keys hebt ingesteld):
-# git remote add origin git@github.com:YOUR_USERNAME/REPO_NAME.git
+# git remote add origin git@github.com:rivaldorose/flowpro.git
 
 # Controleer of remote correct is ingesteld
 git remote -v
 ```
+
+**Let op:** Als je een authenticatie fout krijgt:
+1. Zorg dat je ingelogd bent met het juiste GitHub account (`rivaldorose`)
+2. Of gebruik een Personal Access Token:
+   - Ga naar GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic)
+   - Maak een nieuwe token aan met `repo` permissions
+   - Gebruik de token als wachtwoord bij `git push`
 
 ## Stap 5: Code Pushen
 
