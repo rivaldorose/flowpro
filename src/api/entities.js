@@ -148,29 +148,57 @@ export const User = {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) throw new Error('Not authenticated')
     
-    // Update auth user metadata
-    const { error: authError } = await supabase.auth.updateUser({
+    // Check if user profile exists
+    const { data: existingProfile } = await supabase
+      .from('users')
+      .select('id')
+      .eq('id', user.id)
+      .single()
+    
+    // Prepare user data
+    const userData = {
+      id: user.id,
+      email: user.email,
+      full_name: data.full_name,
+      avatar_url: data.photo,
+      ...(data.job_title && { job_title: data.job_title })
+    }
+    
+    let profile
+    if (existingProfile) {
+      // Update existing profile
+      const { data: updated, error: profileError } = await supabase
+        .from('users')
+        .update({
+          full_name: data.full_name,
+          avatar_url: data.photo,
+          ...(data.job_title && { job_title: data.job_title })
+        })
+        .eq('id', user.id)
+        .select()
+        .single()
+      
+      if (profileError) throw profileError
+      profile = updated
+    } else {
+      // Create new profile if it doesn't exist
+      const { data: created, error: profileError } = await supabase
+        .from('users')
+        .insert(userData)
+        .select()
+        .single()
+      
+      if (profileError) throw profileError
+      profile = created
+    }
+    
+    // Update auth user metadata (non-blocking)
+    supabase.auth.updateUser({
       data: {
         full_name: data.full_name,
         avatar_url: data.photo
       }
-    })
-    if (authError) throw authError
-    
-    // Update users table
-    const { data: profile, error: profileError } = await supabase
-      .from('users')
-      .update({
-        full_name: data.full_name,
-        avatar_url: data.photo,
-        ...(data.phone && { phone: data.phone }),
-        ...(data.job_title && { job_title: data.job_title })
-      })
-      .eq('id', user.id)
-      .select()
-      .single()
-    
-    if (profileError) throw profileError
+    }).catch(err => console.warn('Failed to update auth metadata:', err))
     
     return {
       id: user.id,
@@ -178,7 +206,6 @@ export const User = {
       full_name: profile.full_name || data.full_name,
       photo: profile.avatar_url || data.photo,
       role: profile.role || 'user',
-      phone: profile.phone || data.phone,
       job_title: profile.job_title || data.job_title
     }
   }
