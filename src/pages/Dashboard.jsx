@@ -5,7 +5,7 @@ import { Project, Business, User } from '@/api/entities';
 import { 
   Clapperboard, Search, Bell, Plus, X, MoreHorizontal, Film, 
   Tv, Music, FileText, LayoutGrid, List, ChevronDown, 
-  CheckCircle2, Camera, Video, Megaphone, User, Settings, LogOut
+  CheckCircle2, Camera, Video, Megaphone, User as UserIcon, Settings, LogOut
 } from 'lucide-react';
 import { createPageUrl } from '../utils';
 import { format } from 'date-fns';
@@ -246,7 +246,7 @@ export default function Dashboard() {
               <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all transform origin-top-right scale-95 group-hover:scale-100 z-50">
                 <div className="py-1">
                   <a href="#" className="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-purple-600">
-                    <User className="w-4 h-4" /> Profile
+                    <UserIcon className="w-4 h-4" /> Profile
                   </a>
                   <a href="#" className="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-purple-600">
                     <Settings className="w-4 h-4" /> Settings
