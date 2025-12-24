@@ -36,6 +36,8 @@ import PodcastDetail from "./PodcastDetail";
 
 import Storyboard from "./Storyboard";
 
+import ProductionPlanning from "./ProductionPlanning";
+
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 
 const PAGES = {
@@ -75,6 +77,8 @@ const PAGES = {
     PodcastDetail: PodcastDetail,
     
     Storyboard: Storyboard,
+    
+    ProductionPlanning: ProductionPlanning,
     
 }
 
@@ -138,6 +142,8 @@ function PagesContent() {
                 <Route path="/PodcastDetail" element={<PodcastDetail />} />
                 
                 <Route path="/Storyboard" element={<Storyboard />} />
+                
+                <Route path="/ProductionPlanning" element={<ProductionPlanning />} />
                 
             </Routes>
         </Layout>
