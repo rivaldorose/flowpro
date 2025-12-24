@@ -22,15 +22,13 @@ export default function ProfileSetup() {
 
   const updateMutation = useMutation({
     mutationFn: async (data) => {
-      // First check session
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-      if (sessionError || !session) {
-        throw new Error('Je sessie is verlopen. Log opnieuw in.');
-      }
-
-      // Get current user
+      // Get current user (this will throw if not authenticated)
       const { data: { user }, error: userError } = await supabase.auth.getUser();
-      if (userError || !user) {
+      if (userError) {
+        console.error('Auth error:', userError);
+        throw new Error('Authenticatie fout: ' + userError.message);
+      }
+      if (!user) {
         throw new Error('Je bent niet ingelogd. Log opnieuw in.');
       }
 
