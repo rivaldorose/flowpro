@@ -22,6 +22,12 @@ export default function ProfileSetup() {
 
   const updateMutation = useMutation({
     mutationFn: async (data) => {
+      // First check session
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError || !session) {
+        throw new Error('Je sessie is verlopen. Log opnieuw in.');
+      }
+
       // Get current user
       const { data: { user }, error: userError } = await supabase.auth.getUser();
       if (userError || !user) {
