@@ -183,92 +183,93 @@ export default function TeamMembers() {
             </div>
 
             {/* Team Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* OWNER CARD */}
-              <div className="bg-white border border-[#6B46C1]/30 rounded-xl p-5 shadow-sm relative group hover:shadow-md transition-all ring-1 ring-[#6B46C1]/10">
-                <div className="absolute top-4 right-4 text-[#6B7280] hover:text-[#1F2937] cursor-pointer">
-                  <MoreVertical className="w-4.5 h-4.5" />
-                </div>
-                <div className="flex items-start gap-4">
-                  <div className="relative">
-                    <img 
-                      src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=150&auto=format&fit=crop" 
-                      className="w-14 h-14 rounded-full object-cover border-2 border-[#6B46C1]/20" 
-                      alt="Sarah"
-                    />
-                    <div className="absolute -bottom-1 -right-1 bg-[#6B46C1] text-white rounded-full p-0.5 border-2 border-white" title="Owner">
-                      <Crown className="w-2.5 h-2.5" />
-                    </div>
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-semibold text-[#1F2937] truncate">Sarah Johnson</h3>
-                      <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-[#6B46C1]/10 text-[#6B46C1] border border-[#6B46C1]/20 uppercase tracking-wide">Owner</span>
-                    </div>
-                    <p className="text-sm text-[#6B7280] truncate">sarah@example.com (You)</p>
-                    <div className="mt-3 flex items-center gap-2 text-xs text-[#6B7280]">
-                      <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-[#10B981]"></span> Online</span>
-                      <span>•</span>
-                      <span>Full access</span>
-                    </div>
-                  </div>
-                </div>
+            {loadingMembers ? (
+              <div className="flex items-center justify-center py-12">
+                <Loader2 className="w-6 h-6 animate-spin text-[#6B7280]" />
               </div>
+            ) : teamMembers.length === 0 ? (
+              <div className="bg-white border border-[#E5E7EB] rounded-xl p-12 text-center">
+                <p className="text-[#6B7280]">No team members found</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {teamMembers.map((member) => {
+                  const user = member.users
+                  const project = member.projects
+                  const isOwner = member.role === 'owner'
+                  const isCurrentUser = user?.id === currentUser?.id
+                  const initials = user?.full_name
+                    ?.split(' ')
+                    .map(n => n[0])
+                    .join('')
+                    .toUpperCase()
+                    .slice(0, 2) || '?'
 
-              {/* EDITOR CARD */}
-              <div className="bg-white border border-[#E5E7EB] rounded-xl p-5 shadow-sm relative group hover:shadow-md transition-all">
-                <div className="absolute top-4 right-4 text-[#6B7280] hover:text-[#1F2937] cursor-pointer">
-                  <button className="p-1 hover:bg-gray-100 rounded"><MoreVertical className="w-4.5 h-4.5" /></button>
-                </div>
-                <div className="flex items-start gap-4">
-                  <div className="relative">
-                    <img 
-                      src="https://images.unsplash.com/photo-1599566150163-29194dcaad36?q=80&w=150&auto=format&fit=crop" 
-                      className="w-14 h-14 rounded-full object-cover border border-[#E5E7EB]" 
-                      alt="John"
-                    />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-semibold text-[#1F2937] truncate">John Smith</h3>
-                      <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-[#3B82F6]/10 text-[#3B82F6] border border-[#3B82F6]/20 uppercase tracking-wide">Editor</span>
-                    </div>
-                    <p className="text-sm text-[#6B7280] truncate">john@example.com</p>
-                    <div className="mt-3 flex items-center justify-between">
-                      <span className="text-xs text-[#6B7280]">Active 2h ago</span>
-                      <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button className="text-xs font-medium text-[#6B7280] hover:text-[#3B82F6] transition-colors">Change Role</button>
+                  return (
+                    <div
+                      key={member.id}
+                      className={`bg-white border rounded-xl p-5 shadow-sm relative group hover:shadow-md transition-all ${
+                        isOwner ? 'border-[#6B46C1]/30 ring-1 ring-[#6B46C1]/10' : 'border-[#E5E7EB]'
+                      }`}
+                    >
+                      <div className="absolute top-4 right-4 text-[#6B7280] hover:text-[#1F2937] cursor-pointer">
+                        <MoreVertical className="w-4.5 h-4.5" />
+                      </div>
+                      <div className="flex items-start gap-4">
+                        <div className="relative">
+                          {user?.avatar_url ? (
+                            <img 
+                              src={user.avatar_url} 
+                              className={`w-14 h-14 rounded-full object-cover border-2 ${
+                                isOwner ? 'border-[#6B46C1]/20' : 'border-[#E5E7EB]'
+                              }`} 
+                              alt={user.full_name || user.email}
+                            />
+                          ) : (
+                            <div className={`w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center text-[#6B7280] border ${
+                              isOwner ? 'border-[#6B46C1]/20' : 'border-[#E5E7EB]'
+                            } text-lg font-medium`}>
+                              {initials}
+                            </div>
+                          )}
+                          {isOwner && (
+                            <div className="absolute -bottom-1 -right-1 bg-[#6B46C1] text-white rounded-full p-0.5 border-2 border-white" title="Owner">
+                              <Crown className="w-2.5 h-2.5" />
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <h3 className="font-semibold text-[#1F2937] truncate">
+                              {user?.full_name || user?.email || 'Unknown User'}
+                              {isCurrentUser && <span className="text-xs text-[#6B7280] ml-1">(You)</span>}
+                            </h3>
+                            <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium border uppercase tracking-wide ${
+                              member.role === 'owner' 
+                                ? 'bg-[#6B46C1]/10 text-[#6B46C1] border-[#6B46C1]/20'
+                                : member.role === 'editor'
+                                ? 'bg-[#3B82F6]/10 text-[#3B82F6] border-[#3B82F6]/20'
+                                : 'bg-gray-100 text-[#6B7280] border-gray-200'
+                            }`}>
+                              {member.role}
+                            </span>
+                          </div>
+                          <p className="text-sm text-[#6B7280] truncate">{user?.email}</p>
+                          {project && (
+                            <p className="text-xs text-[#6B7280] mt-1">Project: {project.title}</p>
+                          )}
+                          {member.joined_at && (
+                            <div className="mt-3 flex items-center gap-2 text-xs text-[#6B7280]">
+                              <span>Joined {new Date(member.joined_at).toLocaleDateString()}</span>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </div>
+                  )
+                })}
               </div>
-              
-              {/* VIEWER CARD */}
-              <div className="bg-white border border-[#E5E7EB] rounded-xl p-5 shadow-sm relative group hover:shadow-md transition-all">
-                <div className="absolute top-4 right-4 text-[#6B7280] hover:text-[#1F2937] cursor-pointer">
-                  <button className="p-1 hover:bg-gray-100 rounded"><MoreVertical className="w-4.5 h-4.5" /></button>
-                </div>
-                <div className="flex items-start gap-4">
-                  <div className="relative">
-                    <div className="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center text-[#6B7280] border border-[#E5E7EB] text-lg font-medium">EK</div>
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-semibold text-[#1F2937] truncate">Elena Kovacs</h3>
-                      <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-gray-100 text-[#6B7280] border border-gray-200 uppercase tracking-wide">Viewer</span>
-                    </div>
-                    <p className="text-sm text-[#6B7280] truncate">elena.k@agency.com</p>
-                    <div className="mt-3 flex items-center justify-between">
-                      <span className="text-xs text-[#6B7280]">Joined yesterday</span>
-                      <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button className="text-xs font-medium text-[#6B7280] hover:text-[#3B82F6] transition-colors">Change Role</button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            )}
 
             {/* Pending Invites */}
             {invitations.length > 0 && (
