@@ -1,8 +1,13 @@
 import Layout from "./Layout.jsx";
+import AppLayout from "../components/layout/AppLayout";
 
 import Dashboard from "./Dashboard";
 
 import Projects from "./Projects";
+
+import Templates from "./Templates";
+
+import ProjectLayout from "./project/ProjectLayout";
 
 import Businesses from "./Businesses";
 
@@ -47,6 +52,20 @@ import SignIn from "./SignIn";
 import SignUp from "./SignUp";
 
 import ForgotPassword from "./ForgotPassword";
+
+import ShortFilmTemplate from "./ShortFilmTemplate";
+
+import MusicVideoTemplate from "./MusicVideoTemplate";
+
+import CommercialProductionTemplate from "./CommercialProductionTemplate";
+
+import PodcastProductionTemplate from "./PodcastProductionTemplate";
+
+import BlankCanvasTemplate from "./BlankCanvasTemplate";
+
+import PhotoshootProductionTemplate from "./PhotoshootProductionTemplate";
+
+import DocumentaryTemplate from "./DocumentaryTemplate";
 
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 
@@ -100,6 +119,22 @@ const PAGES = {
     
     ForgotPassword: ForgotPassword,
     
+    ShortFilmTemplate: ShortFilmTemplate,
+    
+    MusicVideoTemplate: MusicVideoTemplate,
+    
+    CommercialProductionTemplate: CommercialProductionTemplate,
+    
+    PodcastProductionTemplate: PodcastProductionTemplate,
+    
+    BlankCanvasTemplate: BlankCanvasTemplate,
+    
+    PhotoshootProductionTemplate: PhotoshootProductionTemplate,
+    
+    DocumentaryTemplate: DocumentaryTemplate,
+    
+    Templates: Templates,
+    
 }
 
 function _getCurrentPage(url) {
@@ -129,8 +164,42 @@ function PagesContent() {
             <Route path="/signup" element={<SignUp />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/forgotpassword" element={<ForgotPassword />} />
+
+            {/* NEW v2.0 Routes with AppLayout (Horizontal Navbar) */}
+            <Route path="/templates" element={
+                <AppLayout>
+                    <Templates />
+                </AppLayout>
+            } />
+            <Route path="/dashboard" element={
+                <AppLayout>
+                    <Dashboard />
+                </AppLayout>
+            } />
+            <Route path="/projects" element={
+                <AppLayout>
+                    <Projects />
+                </AppLayout>
+            } />
+            <Route path="/project/:id" element={<ProjectLayout />} />
             
-            {/* All other pages with Layout */}
+            {/* Template pages without Layout (they have their own full-screen layout) */}
+            <Route path="/ShortFilmTemplate" element={<ShortFilmTemplate />} />
+            <Route path="/templates/short-film" element={<ShortFilmTemplate />} />
+            <Route path="/MusicVideoTemplate" element={<MusicVideoTemplate />} />
+            <Route path="/templates/music-video" element={<MusicVideoTemplate />} />
+            <Route path="/CommercialProductionTemplate" element={<CommercialProductionTemplate />} />
+            <Route path="/templates/commercial" element={<CommercialProductionTemplate />} />
+            <Route path="/PodcastProductionTemplate" element={<PodcastProductionTemplate />} />
+            <Route path="/templates/podcast" element={<PodcastProductionTemplate />} />
+            <Route path="/BlankCanvasTemplate" element={<BlankCanvasTemplate />} />
+            <Route path="/templates/blank" element={<BlankCanvasTemplate />} />
+            <Route path="/PhotoshootProductionTemplate" element={<PhotoshootProductionTemplate />} />
+            <Route path="/templates/photoshoot" element={<PhotoshootProductionTemplate />} />
+            <Route path="/DocumentaryTemplate" element={<DocumentaryTemplate />} />
+            <Route path="/templates/documentary" element={<DocumentaryTemplate />} />
+            
+            {/* OLD Routes with Legacy Layout (backwards compatible) */}
             <Route path="*" element={
                 <Layout currentPageName={currentPage}>
                     <Routes>
