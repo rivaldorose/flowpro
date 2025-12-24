@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { createPageUrl } from '../utils';
 import { format } from 'date-fns';
+import BudgetTab from './BudgetTab';
 
 const SHOT_TYPES = {
   'WS': { label: 'WS', color: 'bg-blue-100 text-blue-700 border-blue-200' },
@@ -180,10 +181,7 @@ export default function ProductionPlanning() {
           </button>
 
           <button 
-            onClick={() => {
-              setActiveTab('budget');
-              navigate(createPageUrl(`Budget?project_id=${projectId}`));
-            }}
+            onClick={() => setActiveTab('budget')}
             className={`group relative py-3 px-1 text-xs font-medium transition-colors ${
               activeTab === 'budget' 
                 ? 'text-purple-600 font-bold' 
@@ -482,14 +480,9 @@ export default function ProductionPlanning() {
           </div>
         )}
 
-        {/* TAB 3: BUDGET - Redirect to Budget page */}
+        {/* TAB 3: BUDGET */}
         {activeTab === 'budget' && (
-          <div className="h-full flex items-center justify-center">
-            <div className="text-center">
-              <DollarSign className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-500 mb-4">Redirecting to Budget page...</p>
-            </div>
-          </div>
+          <BudgetTab projectId={projectId} />
         )}
 
         {/* TAB 4: CONTACTS */}
