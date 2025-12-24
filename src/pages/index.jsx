@@ -32,6 +32,7 @@ import Locations from "./Locations";
 import Team from "./Team";
 
 import Profile from "./Profile";
+import Settings from "./Settings";
 
 import Tasks from "./Tasks";
 
@@ -213,11 +214,25 @@ function PagesContent() {
             <Route path="/DocumentaryTemplate" element={<ProfileGuard><DocumentaryTemplate /></ProfileGuard>} />
             <Route path="/templates/documentary" element={<ProfileGuard><DocumentaryTemplate /></ProfileGuard>} />
             
-            {/* Settings route - redirect to Profile */}
+            {/* Settings routes */}
             <Route path="/settings" element={
                 <ProfileGuard>
                     <AppLayout>
-                        <Profile />
+                        <Settings />
+                    </AppLayout>
+                </ProfileGuard>
+            } />
+            <Route path="/settings/team" element={
+                <ProfileGuard>
+                    <AppLayout>
+                        <Settings />
+                    </AppLayout>
+                </ProfileGuard>
+            } />
+            <Route path="/settings/equipment" element={
+                <ProfileGuard>
+                    <AppLayout>
+                        <Settings />
                     </AppLayout>
                 </ProfileGuard>
             } />
