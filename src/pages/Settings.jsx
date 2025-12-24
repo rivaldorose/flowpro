@@ -43,13 +43,14 @@ export default function Settings() {
   
   // Determine active section from current path
   const getActiveSection = () => {
-    if (location.pathname === '/settings' || location.pathname === '/settings/') {
+    const path = location.pathname;
+    if (path === '/settings' || path === '/settings/') {
       return 'profile';
     }
-    if (location.pathname === '/settings/team') {
+    if (path === '/settings/team') {
       return 'team';
     }
-    if (location.pathname === '/settings/equipment') {
+    if (path === '/settings/equipment') {
       return 'equipment';
     }
     return 'profile';
