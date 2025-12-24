@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { User } from '@/api/entities';
 import { UploadFile } from '@/api/integrations';
+import { supabase } from '@/lib/supabase';
 
 /**
  * Profile Setup - Mandatory profile creation page
@@ -20,7 +21,66 @@ export default function ProfileSetup() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: (data) => User.updateMe(data),
+    mutationFn: async (data) => {
+      // Get current user
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      if (userError || !user) {
+        throw new Error('Je bent niet ingelogd. Log opnieuw in.');
+      }
+
+      // Check if profile exists
+      const { data: existingProfile } = await supabase
+        .from('users')
+        .select('id')
+        .eq('id', user.id)
+        .single();
+
+      const userData = {
+        id: user.id,
+        email: user.email,
+        full_name: data.full_name,
+        avatar_url: data.photo || null,
+        ...(data.job_title && { job_title: data.job_title })
+      };
+
+      let profile;
+      if (existingProfile) {
+        // Update existing
+        const { data: updated, error: updateError } = await supabase
+          .from('users')
+          .update({
+            full_name: data.full_name,
+            avatar_url: data.photo || null,
+            ...(data.job_title && { job_title: data.job_title })
+          })
+          .eq('id', user.id)
+          .select()
+          .single();
+        
+        if (updateError) throw updateError;
+        profile = updated;
+      } else {
+        // Create new
+        const { data: created, error: createError } = await supabase
+          .from('users')
+          .insert(userData)
+          .select()
+          .single();
+        
+        if (createError) throw createError;
+        profile = created;
+      }
+
+      // Update auth metadata (non-blocking)
+      supabase.auth.updateUser({
+        data: {
+          full_name: data.full_name,
+          avatar_url: data.photo
+        }
+      }).catch(err => console.warn('Auth metadata update failed:', err));
+
+      return profile;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['currentUser'] });
       queryClient.invalidateQueries({ queryKey: ['userProfile'] });
@@ -28,6 +88,7 @@ export default function ProfileSetup() {
       window.location.href = '/dashboard';
     },
     onError: (error) => {
+      console.error('Profile update error:', error);
       setError(error.message || 'Kon profiel niet opslaan. Probeer het opnieuw.');
       setLoading(false);
     },
