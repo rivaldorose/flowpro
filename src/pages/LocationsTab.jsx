@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import { Location } from '@/api/entities';
 import { 
   ArrowLeft, Search, Filter, LayoutGrid, Map, List, Plus, MoreHorizontal,
   MapPin, DollarSign, FileText, Car, Wifi, Sun, Users, Camera, Zap, Truck,
@@ -30,7 +30,7 @@ export default function LocationsTab({ projectId }) {
 
   const { data: locations = [] } = useQuery({
     queryKey: ['locations', projectId],
-    queryFn: () => base44.entities.Location.list('name'),
+    queryFn: () => Location.list('name'),
   });
 
   const [formData, setFormData] = useState({
@@ -44,7 +44,7 @@ export default function LocationsTab({ projectId }) {
   });
 
   const createMutation = useMutation({
-    mutationFn: (data) => base44.entities.Location.create(data),
+    mutationFn: (data) => Location.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['locations'] });
       setShowAddModal(false);

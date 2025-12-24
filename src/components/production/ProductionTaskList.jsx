@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import { ProductionTask } from '@/api/entities';
 import { MapPin, Package, Users, Sparkles, Clock, Shirt, Music, CheckCircle2, Circle, Loader2, Plus } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -49,12 +49,12 @@ export default function ProductionTaskList({ projectId }) {
 
   const { data: tasks = [], isLoading } = useQuery({
     queryKey: ['productionTasks', projectId],
-    queryFn: () => base44.entities.ProductionTask.filter({ project_id: projectId }),
+    queryFn: () => ProductionTask.filter({ project_id: projectId }),
     enabled: !!projectId,
   });
 
   const createMutation = useMutation({
-    mutationFn: (data) => base44.entities.ProductionTask.create(data),
+    mutationFn: (data) => ProductionTask.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['productionTasks', projectId] });
       setShowForm(false);
@@ -63,14 +63,14 @@ export default function ProductionTaskList({ projectId }) {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.ProductionTask.update(id, data),
+    mutationFn: ({ id, data }) => ProductionTask.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['productionTasks', projectId] });
     },
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id) => base44.entities.ProductionTask.delete(id),
+    mutationFn: (id) => ProductionTask.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['productionTasks', projectId] });
     },

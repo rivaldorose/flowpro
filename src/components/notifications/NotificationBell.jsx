@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import { User, Notification } from '@/api/entities';
 import { Bell, CheckCheck, Trash2, X } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -15,25 +15,25 @@ export default function NotificationBell() {
 
   const { data: currentUser } = useQuery({
     queryKey: ['currentUser'],
-    queryFn: () => base44.auth.me(),
+    queryFn: () => User.me(),
   });
 
   const { data: notifications = [] } = useQuery({
     queryKey: ['notifications', currentUser?.email],
-    queryFn: () => base44.entities.Notification.filter({ user_email: currentUser?.email }),
+    queryFn: () => Notification.filter({ user_email: currentUser?.email }),
     enabled: !!currentUser?.email,
     refetchInterval: 30000,
   });
 
   const markAsReadMutation = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.Notification.update(id, data),
+    mutationFn: ({ id, data }) => Notification.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['notifications'] });
     },
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id) => base44.entities.Notification.delete(id),
+    mutationFn: (id) => Notification.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['notifications'] });
     },

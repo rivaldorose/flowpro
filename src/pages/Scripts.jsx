@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import { Script, Project } from '@/api/entities';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '../utils';
 import { Plus, FileText, Edit2, Trash2, Search, Clock } from 'lucide-react';
@@ -39,16 +39,16 @@ export default function Scripts() {
 
   const { data: scripts = [], isLoading } = useQuery({
     queryKey: ['scripts'],
-    queryFn: () => base44.entities.Script.list('-updated_date'),
+    queryFn: () => Script.list('-updated_date'),
   });
 
   const { data: projects = [] } = useQuery({
     queryKey: ['projects'],
-    queryFn: () => base44.entities.Project.list(),
+    queryFn: () => Project.list(),
   });
 
   const createMutation = useMutation({
-    mutationFn: (data) => base44.entities.Script.create(data),
+    mutationFn: (data) => Script.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['scripts'] });
       closeForm();
@@ -58,7 +58,7 @@ export default function Scripts() {
 
 
   const deleteMutation = useMutation({
-    mutationFn: (id) => base44.entities.Script.delete(id),
+    mutationFn: (id) => Script.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['scripts'] });
     },

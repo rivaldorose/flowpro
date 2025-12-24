@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import { CrewMember } from '@/api/entities';
 import { 
   ArrowLeft, Search, Filter, LayoutGrid, List, Plus, MoreVertical,
   Mail, Phone, Film, Camera, X, CheckCircle2, Star, MapPin, Globe,
@@ -37,7 +37,7 @@ export default function ContactsTab({ projectId }) {
 
   const { data: crew = [] } = useQuery({
     queryKey: ['crew'],
-    queryFn: () => base44.entities.CrewMember.list('name'),
+    queryFn: () => CrewMember.list('name'),
   });
 
   const [formData, setFormData] = useState({
@@ -50,7 +50,7 @@ export default function ContactsTab({ projectId }) {
   });
 
   const createMutation = useMutation({
-    mutationFn: (data) => base44.entities.CrewMember.create(data),
+    mutationFn: (data) => CrewMember.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['crew'] });
       setShowAddModal(false);

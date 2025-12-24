@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import { User, Document } from '@/api/entities';
+import { UploadFile } from '@/api/integrations';
 import { Upload, FileText, Download, Trash2, Loader2, File, Image, FileVideo } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -32,17 +33,17 @@ export default function DocumentSharing({ projectId }) {
 
   const { data: currentUser } = useQuery({
     queryKey: ['currentUser'],
-    queryFn: () => base44.auth.me(),
+    queryFn: () => User.me(),
   });
 
   const { data: documents = [] } = useQuery({
     queryKey: ['documents', projectId],
-    queryFn: () => base44.entities.Document.filter({ project_id: projectId }, '-created_date'),
+    queryFn: () => Document.filter({ project_id: projectId }, '-created_date'),
     enabled: !!projectId,
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id) => base44.entities.Document.delete(id),
+    mutationFn: (id) => Document.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['documents', projectId] });
     },
@@ -61,9 +62,9 @@ export default function DocumentSharing({ projectId }) {
 
     setUploading(true);
     try {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      const { file_url } = await UploadFile({ file });
       
-      await base44.entities.Document.create({
+      await Document.create({
         project_id: projectId,
         file_url,
         file_name: file.name,

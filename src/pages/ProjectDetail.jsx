@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import { Project, Business, Script, BudgetEntry, ShootSchedule, Shot, PostProduction } from '@/api/entities';
 import { ArrowLeft, Edit2, Save, FileText, Euro, Calendar, Film, CheckSquare, Users, Video, MapPin, Upload, Plus } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '../utils';
@@ -50,7 +50,7 @@ export default function ProjectDetail() {
   const { data: project, isLoading } = useQuery({
     queryKey: ['project', projectId],
     queryFn: async () => {
-      const projects = await base44.entities.Project.filter({ id: projectId });
+      const projects = await Project.filter({ id: projectId });
       return projects[0];
     },
     enabled: !!projectId,
@@ -58,41 +58,41 @@ export default function ProjectDetail() {
 
   const { data: businesses = [] } = useQuery({
     queryKey: ['businesses'],
-    queryFn: () => base44.entities.Business.list(),
+    queryFn: () => Business.list(),
   });
 
   const { data: scripts = [] } = useQuery({
     queryKey: ['projectScripts', projectId],
-    queryFn: () => base44.entities.Script.filter({ project_id: projectId }),
+    queryFn: () => Script.filter({ project_id: projectId }),
     enabled: !!projectId,
   });
 
   const { data: budgetEntries = [] } = useQuery({
     queryKey: ['projectBudget', projectId],
-    queryFn: () => base44.entities.BudgetEntry.filter({ project_id: projectId }),
+    queryFn: () => BudgetEntry.filter({ project_id: projectId }),
     enabled: !!projectId,
   });
 
   const { data: shoots = [] } = useQuery({
     queryKey: ['projectShoots', projectId],
-    queryFn: () => base44.entities.ShootSchedule.filter({ project_id: projectId }),
+    queryFn: () => ShootSchedule.filter({ project_id: projectId }),
     enabled: !!projectId,
   });
 
   const { data: shots = [] } = useQuery({
     queryKey: ['projectShots', projectId],
-    queryFn: () => base44.entities.Shot.filter({ project_id: projectId }),
+    queryFn: () => Shot.filter({ project_id: projectId }),
     enabled: !!projectId,
   });
 
   const { data: postProduction = [] } = useQuery({
     queryKey: ['projectPost', projectId],
-    queryFn: () => base44.entities.PostProduction.filter({ project_id: projectId }),
+    queryFn: () => PostProduction.filter({ project_id: projectId }),
     enabled: !!projectId,
   });
 
   const updateMutation = useMutation({
-    mutationFn: (data) => base44.entities.Project.update(projectId, data),
+    mutationFn: (data) => Project.update(projectId, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['project', projectId] });
       setIsEditing(false);

@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import { User, Comment, Notification } from '@/api/entities';
 import { Send, Trash2, AtSign, Loader2 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -18,12 +18,12 @@ export default function CommentSection({ projectId, taskId = null }) {
 
   const { data: currentUser } = useQuery({
     queryKey: ['currentUser'],
-    queryFn: () => base44.auth.me(),
+    queryFn: () => User.me(),
   });
 
   const { data: users = [] } = useQuery({
     queryKey: ['users'],
-    queryFn: () => base44.entities.User.list(),
+    queryFn: () => User.list(),
   });
 
   const { data: comments = [] } = useQuery({
@@ -32,20 +32,20 @@ export default function CommentSection({ projectId, taskId = null }) {
       const filter = taskId 
         ? { project_id: projectId, task_id: taskId }
         : { project_id: projectId, task_id: null };
-      return base44.entities.Comment.filter(filter, '-created_date');
+      return Comment.filter(filter, '-created_date');
     },
     enabled: !!projectId,
   });
 
   const createMutation = useMutation({
     mutationFn: async (data) => {
-      const comment = await base44.entities.Comment.create(data);
+      const comment = await Comment.create(data);
       
       // Send notifications for mentions
       if (data.mentions && data.mentions.length > 0) {
         await Promise.all(
           data.mentions.map(email =>
-            base44.entities.Notification.create({
+            Notification.create({
               user_email: email,
               type: 'task_assigned',
               title: 'Je bent vermeld in een reactie',
@@ -68,7 +68,7 @@ export default function CommentSection({ projectId, taskId = null }) {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id) => base44.entities.Comment.delete(id),
+    mutationFn: (id) => Comment.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['comments', projectId, taskId] });
     },

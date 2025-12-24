@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import { Business, Project } from '@/api/entities';
 import { Plus, Briefcase, Edit2, Trash2, Building2, FolderKanban } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -27,16 +27,16 @@ export default function Businesses() {
 
   const { data: businesses = [], isLoading } = useQuery({
     queryKey: ['businesses'],
-    queryFn: () => base44.entities.Business.list('-created_date'),
+    queryFn: () => Business.list('-created_date'),
   });
 
   const { data: projects = [] } = useQuery({
     queryKey: ['projects'],
-    queryFn: () => base44.entities.Project.list(),
+    queryFn: () => Project.list(),
   });
 
   const createMutation = useMutation({
-    mutationFn: (data) => base44.entities.Business.create(data),
+    mutationFn: (data) => Business.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['businesses'] });
       closeForm();
@@ -44,7 +44,7 @@ export default function Businesses() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.Business.update(id, data),
+    mutationFn: ({ id, data }) => Business.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['businesses'] });
       closeForm();
@@ -52,7 +52,7 @@ export default function Businesses() {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id) => base44.entities.Business.delete(id),
+    mutationFn: (id) => Business.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['businesses'] });
       toast.success('Business succesvol verwijderd');

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import { CrewMember } from '@/api/entities';
 import { Plus, Users, Edit2, Trash2, Mail, Phone, Euro } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -38,11 +38,11 @@ export default function Crew() {
 
   const { data: crew = [], isLoading } = useQuery({
     queryKey: ['crew'],
-    queryFn: () => base44.entities.CrewMember.list('name'),
+    queryFn: () => CrewMember.list('name'),
   });
 
   const createMutation = useMutation({
-    mutationFn: (data) => base44.entities.CrewMember.create(data),
+    mutationFn: (data) => CrewMember.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['crew'] });
       closeForm();
@@ -50,7 +50,7 @@ export default function Crew() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.CrewMember.update(id, data),
+    mutationFn: ({ id, data }) => CrewMember.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['crew'] });
       closeForm();
@@ -58,7 +58,7 @@ export default function Crew() {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id) => base44.entities.CrewMember.delete(id),
+    mutationFn: (id) => CrewMember.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['crew'] });
     },

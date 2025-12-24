@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import { ShootSchedule, Project } from '@/api/entities';
 import { Plus, Calendar, ChevronLeft, ChevronRight, MapPin, Clock, Users } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -43,16 +43,16 @@ export default function Schedule() {
 
   const { data: shoots = [], isLoading } = useQuery({
     queryKey: ['shoots'],
-    queryFn: () => base44.entities.ShootSchedule.list('shoot_date'),
+    queryFn: () => ShootSchedule.list('shoot_date'),
   });
 
   const { data: projects = [] } = useQuery({
     queryKey: ['projects'],
-    queryFn: () => base44.entities.Project.list(),
+    queryFn: () => Project.list(),
   });
 
   const createMutation = useMutation({
-    mutationFn: (data) => base44.entities.ShootSchedule.create(data),
+    mutationFn: (data) => ShootSchedule.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['shoots'] });
       closeForm();

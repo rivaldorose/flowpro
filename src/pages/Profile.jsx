@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import { User } from '@/api/entities';
+import { UploadFile } from '@/api/integrations';
 import { User, Mail, Phone, Briefcase, Camera, Save, Loader2 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,7 +22,7 @@ export default function Profile() {
 
   const { data: currentUser, isLoading } = useQuery({
     queryKey: ['currentUser'],
-    queryFn: () => base44.auth.me(),
+    queryFn: () => User.me(),
   });
 
   React.useEffect(() => {
@@ -36,7 +37,7 @@ export default function Profile() {
   }, [currentUser]);
 
   const updateMutation = useMutation({
-    mutationFn: (data) => base44.auth.updateMe(data),
+    mutationFn: (data) => User.updateMe(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['currentUser'] });
       toast.success('Profiel succesvol bijgewerkt');
@@ -49,7 +50,7 @@ export default function Profile() {
 
     setUploading(true);
     try {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      const { file_url } = await UploadFile({ file });
       setFormData(prev => ({ ...prev, photo: file_url }));
       toast.success('Foto geüpload');
     } catch (error) {
@@ -215,7 +216,7 @@ export default function Profile() {
         </p>
         <Button 
           variant="outline" 
-          onClick={() => base44.auth.logout()}
+          onClick={() => User.signOut()}
           className="border-red-500/30 text-red-400 hover:bg-red-500/10"
         >
           Uitloggen

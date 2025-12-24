@@ -42,6 +42,12 @@ import TeamMembers from "./TeamMembers";
 
 import Equipment from "./Equipment";
 
+import SignIn from "./SignIn";
+
+import SignUp from "./SignUp";
+
+import ForgotPassword from "./ForgotPassword";
+
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 
 const PAGES = {
@@ -88,6 +94,12 @@ const PAGES = {
     
     Equipment: Equipment,
     
+    SignIn: SignIn,
+    
+    SignUp: SignUp,
+    
+    ForgotPassword: ForgotPassword,
+    
 }
 
 function _getCurrentPage(url) {
@@ -107,62 +119,49 @@ function _getCurrentPage(url) {
 function PagesContent() {
     const location = useLocation();
     const currentPage = _getCurrentPage(location.pathname);
+    const isAuthPage = location.pathname === '/signin' || location.pathname === '/login' || location.pathname === '/signup' || location.pathname === '/forgot-password' || location.pathname === '/forgotpassword';
     
     return (
-        <Layout currentPageName={currentPage}>
-            <Routes>            
-                
-                    <Route path="/" element={<Dashboard />} />
-                
-                
-                <Route path="/Dashboard" element={<Dashboard />} />
-                
-                <Route path="/Projects" element={<Projects />} />
-                
-                <Route path="/Businesses" element={<Businesses />} />
-                
-                <Route path="/Crew" element={<Crew />} />
-                
-                <Route path="/Schedule" element={<Schedule />} />
-                
-                <Route path="/Scripts" element={<Scripts />} />
-                
-                <Route path="/Budget" element={<Budget />} />
-                
-                <Route path="/ProjectDetail" element={<ProjectDetail />} />
-                
-                <Route path="/ScriptDetail" element={<ScriptDetail />} />
-                
-                <Route path="/Shots" element={<Shots />} />
-                
-                <Route path="/PostProduction" element={<PostProduction />} />
-                
-                <Route path="/Locations" element={<Locations />} />
-                
-                <Route path="/Team" element={<Team />} />
-                
-                <Route path="/Profile" element={<Profile />} />
-                
-                <Route path="/Tasks" element={<Tasks />} />
-                
-                <Route path="/Podcasts" element={<Podcasts />} />
-                
-                <Route path="/PodcastDetail" element={<PodcastDetail />} />
-                
-                <Route path="/Storyboard" element={<Storyboard />} />
-                
-                <Route path="/ProductionPlanning" element={<ProductionPlanning />} />
-                
-                <Route path="/TeamMembers" element={<TeamMembers />} />
-                
-                <Route path="/settings/team" element={<TeamMembers />} />
-                
-                <Route path="/Equipment" element={<Equipment />} />
-                
-                <Route path="/ProductionPlanning/Equipment" element={<Equipment />} />
-                
-            </Routes>
-        </Layout>
+        <Routes>
+            {/* Auth pages without Layout */}
+            <Route path="/signin" element={<SignIn />} />
+            <Route path="/login" element={<SignIn />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/forgotpassword" element={<ForgotPassword />} />
+            
+            {/* All other pages with Layout */}
+            <Route path="*" element={
+                <Layout currentPageName={currentPage}>
+                    <Routes>
+                        <Route path="/" element={<Dashboard />} />
+                        <Route path="/Dashboard" element={<Dashboard />} />
+                        <Route path="/Projects" element={<Projects />} />
+                        <Route path="/Businesses" element={<Businesses />} />
+                        <Route path="/Crew" element={<Crew />} />
+                        <Route path="/Schedule" element={<Schedule />} />
+                        <Route path="/Scripts" element={<Scripts />} />
+                        <Route path="/Budget" element={<Budget />} />
+                        <Route path="/ProjectDetail" element={<ProjectDetail />} />
+                        <Route path="/ScriptDetail" element={<ScriptDetail />} />
+                        <Route path="/Shots" element={<Shots />} />
+                        <Route path="/PostProduction" element={<PostProduction />} />
+                        <Route path="/Locations" element={<Locations />} />
+                        <Route path="/Team" element={<Team />} />
+                        <Route path="/Profile" element={<Profile />} />
+                        <Route path="/Tasks" element={<Tasks />} />
+                        <Route path="/Podcasts" element={<Podcasts />} />
+                        <Route path="/PodcastDetail" element={<PodcastDetail />} />
+                        <Route path="/Storyboard" element={<Storyboard />} />
+                        <Route path="/ProductionPlanning" element={<ProductionPlanning />} />
+                        <Route path="/TeamMembers" element={<TeamMembers />} />
+                        <Route path="/settings/team" element={<TeamMembers />} />
+                        <Route path="/Equipment" element={<Equipment />} />
+                        <Route path="/ProductionPlanning/Equipment" element={<Equipment />} />
+                    </Routes>
+                </Layout>
+            } />
+        </Routes>
     );
 }
 

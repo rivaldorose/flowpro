@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import { Location } from '@/api/entities';
+import { UploadFile } from '@/api/integrations';
 import { Plus, MapPin, Phone, Mail, Euro, Trash2, Upload, X, CheckCircle2, Clock, XCircle } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -44,12 +45,12 @@ export default function LocationList({ projectId }) {
 
   const { data: locations = [], isLoading } = useQuery({
     queryKey: ['locations', projectId],
-    queryFn: () => base44.entities.Location.filter({ project_id: projectId }),
+    queryFn: () => Location.filter({ project_id: projectId }),
     enabled: !!projectId,
   });
 
   const createMutation = useMutation({
-    mutationFn: (data) => base44.entities.Location.create({ ...data, project_id: projectId }),
+    mutationFn: (data) => Location.create({ ...data, project_id: projectId }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['locations', projectId] });
       closeForm();
@@ -57,14 +58,14 @@ export default function LocationList({ projectId }) {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.Location.update(id, data),
+    mutationFn: ({ id, data }) => Location.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['locations', projectId] });
     },
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id) => base44.entities.Location.delete(id),
+    mutationFn: (id) => Location.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['locations', projectId] });
     },
@@ -98,7 +99,7 @@ export default function LocationList({ projectId }) {
 
     setUploadingPhoto(true);
     try {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      const { file_url } = await UploadFile({ file });
       setFormData(prev => ({
         ...prev,
         photos: [...(prev.photos || []), file_url]

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import { Location, Project } from '@/api/entities';
+import { UploadFile } from '@/api/integrations';
 import { Plus, MapPin, Phone, Mail, Euro, Trash2, Upload, X, CheckCircle2, Clock, XCircle, Search } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -50,16 +51,16 @@ export default function Locations() {
 
   const { data: locations = [], isLoading } = useQuery({
     queryKey: ['locations'],
-    queryFn: () => base44.entities.Location.list('-updated_date'),
+    queryFn: () => Location.list('-updated_date'),
   });
 
   const { data: projects = [] } = useQuery({
     queryKey: ['projects'],
-    queryFn: () => base44.entities.Project.list(),
+    queryFn: () => Project.list(),
   });
 
   const createMutation = useMutation({
-    mutationFn: (data) => base44.entities.Location.create(data),
+    mutationFn: (data) => Location.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['locations'] });
       closeForm();
@@ -67,14 +68,14 @@ export default function Locations() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.Location.update(id, data),
+    mutationFn: ({ id, data }) => Location.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['locations'] });
     },
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id) => base44.entities.Location.delete(id),
+    mutationFn: (id) => Location.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['locations'] });
     },
@@ -109,7 +110,7 @@ export default function Locations() {
 
     setUploadingPhoto(true);
     try {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      const { file_url } = await UploadFile({ file });
       setFormData(prev => ({
         ...prev,
         photos: [...(prev.photos || []), file_url]

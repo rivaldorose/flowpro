@@ -4,6 +4,10 @@ module.exports = {
     content: ["./index.html", "./src/**/*.{ts,tsx,js,jsx}"],
   theme: {
   	extend: {
+  		fontFamily: {
+  			sans: ['Inter', 'sans-serif'],
+  			serif: ['Fraunces', 'serif'],
+  		},
   		borderRadius: {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',
@@ -12,6 +16,18 @@ module.exports = {
   		colors: {
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
+  			brand: {
+  				purple: '#6B46C1',
+  				purpleDark: '#5B3CA1',
+  				purpleLight: '#F3E8FF',
+  				purpleBorder: '#E9D5FF',
+  				orange: '#F97316',
+  				teal: '#14B8A6',
+  				bg: '#FAFAF9',
+  				text: '#1F2937',
+  				muted: '#78716C',
+  				border: '#E5E7EB',
+  			},
   			card: {
   				DEFAULT: 'hsl(var(--card))',
   				foreground: 'hsl(var(--card-foreground))'
@@ -77,11 +93,38 @@ module.exports = {
   				to: {
   					height: '0'
   				}
+  			},
+  			fadeIn: {
+  				'0%': { opacity: '0' },
+  				'100%': { opacity: '1' },
+  			},
+  			slideUp: {
+  				'0%': { opacity: '0', transform: 'translateY(16px)' },
+  				'100%': { opacity: '1', transform: 'translateY(0)' },
+  			},
+  			shake: {
+  				'10%, 90%': { transform: 'translate3d(-1px, 0, 0)' },
+  				'20%, 80%': { transform: 'translate3d(2px, 0, 0)' },
+  				'30%, 50%, 70%': { transform: 'translate3d(-4px, 0, 0)' },
+  				'40%, 60%': { transform: 'translate3d(4px, 0, 0)' }
+  			},
+  			widthGrow: {
+  				'0%': { width: '0%' },
+  				'100%': { width: '100%' }
+  			},
+  			scaleIn: {
+  				'0%': { opacity: '0', transform: 'scale(0.8)' },
+  				'100%': { opacity: '1', transform: 'scale(1)' }
   			}
   		},
   		animation: {
   			'accordion-down': 'accordion-down 0.2s ease-out',
-  			'accordion-up': 'accordion-up 0.2s ease-out'
+  			'accordion-up': 'accordion-up 0.2s ease-out',
+  			'fade-in': 'fadeIn 0.5s ease-out forwards',
+  			'slide-up': 'slideUp 0.5s ease-out forwards',
+  			'shake': 'shake 0.4s cubic-bezier(.36,.07,.19,.97) both',
+  			'width-grow': 'widthGrow 0.4s ease-out forwards',
+  			'scale-in': 'scaleIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards',
   		}
   	}
   },

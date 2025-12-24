@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import { Casting } from '@/api/entities';
 import { Plus, User, Mail, Phone, Trash2 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -33,12 +33,12 @@ export default function CastingList({ projectId }) {
 
   const { data: castings = [], isLoading } = useQuery({
     queryKey: ['castings', projectId],
-    queryFn: () => base44.entities.Casting.filter({ project_id: projectId }),
+    queryFn: () => Casting.filter({ project_id: projectId }),
     enabled: !!projectId,
   });
 
   const createMutation = useMutation({
-    mutationFn: (data) => base44.entities.Casting.create({ ...data, project_id: projectId }),
+    mutationFn: (data) => Casting.create({ ...data, project_id: projectId }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['castings', projectId] });
       setShowForm(false);
@@ -47,14 +47,14 @@ export default function CastingList({ projectId }) {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.Casting.update(id, data),
+    mutationFn: ({ id, data }) => Casting.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['castings', projectId] });
     },
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id) => base44.entities.Casting.delete(id),
+    mutationFn: (id) => Casting.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['castings', projectId] });
     },

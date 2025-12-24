@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import { PostProduction, Project, CrewMember, PostVersion } from '@/api/entities';
+import { UploadFile } from '@/api/integrations';
 import { Plus, Video, Upload, Clock, CheckCircle2, Trash2, User, Calendar, FileText } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -49,26 +50,26 @@ export default function PostProduction() {
 
   const { data: posts = [], isLoading } = useQuery({
     queryKey: ['postProduction'],
-    queryFn: () => base44.entities.PostProduction.list('-updated_date'),
+    queryFn: () => PostProduction.list('-updated_date'),
   });
 
   const { data: projects = [] } = useQuery({
     queryKey: ['projects'],
-    queryFn: () => base44.entities.Project.list(),
+    queryFn: () => Project.list(),
   });
 
   const { data: crew = [] } = useQuery({
     queryKey: ['crew'],
-    queryFn: () => base44.entities.CrewMember.list(),
+    queryFn: () => CrewMember.list(),
   });
 
   const { data: versions = [] } = useQuery({
     queryKey: ['postVersions'],
-    queryFn: () => base44.entities.PostVersion.list('-version_number'),
+    queryFn: () => PostVersion.list('-version_number'),
   });
 
   const createMutation = useMutation({
-    mutationFn: (data) => base44.entities.PostProduction.create(data),
+    mutationFn: (data) => PostProduction.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['postProduction'] });
       closeForm();
@@ -76,21 +77,21 @@ export default function PostProduction() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.PostProduction.update(id, data),
+    mutationFn: ({ id, data }) => PostProduction.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['postProduction'] });
     },
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id) => base44.entities.PostProduction.delete(id),
+    mutationFn: (id) => PostProduction.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['postProduction'] });
     },
   });
 
   const createVersionMutation = useMutation({
-    mutationFn: (data) => base44.entities.PostVersion.create(data),
+    mutationFn: (data) => PostVersion.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['postVersions'] });
       setShowVersionDialog(false);
@@ -122,7 +123,7 @@ export default function PostProduction() {
 
     setUploadingFile(true);
     try {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      const { file_url } = await UploadFile({ file });
       if (isVersion) {
         setVersionData(prev => ({ ...prev, video_link: file_url }));
       } else {

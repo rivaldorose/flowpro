@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import { PodcastEpisode, Business, CrewMember, PodcastChecklist } from '@/api/entities';
+import { UploadFile } from '@/api/integrations';
 import { ArrowLeft, Edit2, Save, Upload, Plus, Trash2, CheckSquare, FileAudio } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '../utils';
@@ -49,7 +50,7 @@ export default function PodcastDetail() {
   const { data: episode, isLoading } = useQuery({
     queryKey: ['podcastEpisode', episodeId],
     queryFn: async () => {
-      const episodes = await base44.entities.PodcastEpisode.filter({ id: episodeId });
+      const episodes = await PodcastEpisode.filter({ id: episodeId });
       return episodes[0];
     },
     enabled: !!episodeId,
@@ -57,22 +58,22 @@ export default function PodcastDetail() {
 
   const { data: businesses = [] } = useQuery({
     queryKey: ['businesses'],
-    queryFn: () => base44.entities.Business.list(),
+    queryFn: () => Business.list(),
   });
 
   const { data: crew = [] } = useQuery({
     queryKey: ['crew'],
-    queryFn: () => base44.entities.CrewMember.list(),
+    queryFn: () => CrewMember.list(),
   });
 
   const { data: checklist = [] } = useQuery({
     queryKey: ['podcastChecklist', episodeId],
-    queryFn: () => base44.entities.PodcastChecklist.filter({ episode_id: episodeId }),
+    queryFn: () => PodcastChecklist.filter({ episode_id: episodeId }),
     enabled: !!episodeId,
   });
 
   const updateMutation = useMutation({
-    mutationFn: (data) => base44.entities.PodcastEpisode.update(episodeId, data),
+    mutationFn: (data) => PodcastEpisode.update(episodeId, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['podcastEpisode', episodeId] });
       setIsEditing(false);
@@ -80,7 +81,7 @@ export default function PodcastDetail() {
   });
 
   const addChecklistMutation = useMutation({
-    mutationFn: (data) => base44.entities.PodcastChecklist.create(data),
+    mutationFn: (data) => PodcastChecklist.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['podcastChecklist', episodeId] });
       setNewChecklistItem('');
@@ -88,14 +89,14 @@ export default function PodcastDetail() {
   });
 
   const updateChecklistMutation = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.PodcastChecklist.update(id, data),
+    mutationFn: ({ id, data }) => PodcastChecklist.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['podcastChecklist', episodeId] });
     },
   });
 
   const deleteChecklistMutation = useMutation({
-    mutationFn: (id) => base44.entities.PodcastChecklist.delete(id),
+    mutationFn: (id) => PodcastChecklist.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['podcastChecklist', episodeId] });
     },
@@ -108,7 +109,7 @@ export default function PodcastDetail() {
     input.onchange = async (e) => {
       const file = e.target.files[0];
       if (file) {
-        const { file_url } = await base44.integrations.Core.UploadFile({ file });
+        const { file_url } = await UploadFile({ file });
         updateMutation.mutate({ [fieldName]: file_url });
       }
     };

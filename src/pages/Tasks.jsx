@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import { Task, Project, Notification, User } from '@/api/entities';
 import { Plus, CheckSquare, Filter, Search, Calendar as CalendarIcon } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -49,31 +49,31 @@ export default function Tasks() {
 
   const { data: currentUser } = useQuery({
     queryKey: ['currentUser'],
-    queryFn: () => base44.auth.me(),
+    queryFn: () => User.me(),
   });
 
   const { data: tasks = [], isLoading } = useQuery({
     queryKey: ['tasks'],
-    queryFn: () => base44.entities.Task.list('-created_date'),
+    queryFn: () => Task.list('-created_date'),
   });
 
   const { data: projects = [] } = useQuery({
     queryKey: ['projects'],
-    queryFn: () => base44.entities.Project.list(),
+    queryFn: () => Project.list(),
   });
 
   const { data: users = [] } = useQuery({
     queryKey: ['users'],
-    queryFn: () => base44.entities.User.list(),
+    queryFn: () => User.list(),
   });
 
   const createMutation = useMutation({
     mutationFn: async (data) => {
-      const task = await base44.entities.Task.create(data);
+      const task = await Task.create(data);
       
       if (data.assigned_to && data.assigned_to !== currentUser?.email) {
         const project = projects.find(p => p.id === data.project_id);
-        await base44.entities.Notification.create({
+        await Notification.create({
           user_email: data.assigned_to,
           type: 'task_assigned',
           title: 'Nieuwe taak toegewezen',
@@ -95,11 +95,11 @@ export default function Tasks() {
 
   const updateMutation = useMutation({
     mutationFn: async ({ id, data, oldData }) => {
-      const updated = await base44.entities.Task.update(id, data);
+      const updated = await Task.update(id, data);
       
       if (data.status !== oldData.status && data.assigned_to) {
         const project = projects.find(p => p.id === data.project_id);
-        await base44.entities.Notification.create({
+        await Notification.create({
           user_email: data.assigned_to,
           type: 'status_update',
           title: 'Taak status gewijzigd',

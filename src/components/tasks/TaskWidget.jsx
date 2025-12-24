@@ -1,6 +1,6 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import { User, Task, Project } from '@/api/entities';
 import { CheckSquare, Clock, ArrowRight } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
 import { format, isToday, isTomorrow, isPast } from 'date-fns';
@@ -23,18 +23,18 @@ const priorityColors = {
 export default function TaskWidget() {
   const { data: currentUser } = useQuery({
     queryKey: ['currentUser'],
-    queryFn: () => base44.auth.me(),
+    queryFn: () => User.me(),
   });
 
   const { data: myTasks = [], isLoading } = useQuery({
     queryKey: ['myTasks', currentUser?.email],
-    queryFn: () => base44.entities.Task.filter({ assigned_to: currentUser?.email }),
+    queryFn: () => Task.filter({ assigned_to: currentUser?.email }),
     enabled: !!currentUser?.email,
   });
 
   const { data: projects = [] } = useQuery({
     queryKey: ['projects'],
-    queryFn: () => base44.entities.Project.list(),
+    queryFn: () => Project.list(),
   });
 
   const projectMap = projects.reduce((acc, p) => ({ ...acc, [p.id]: p }), {});

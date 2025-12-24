@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import { Script, Project, User } from '@/api/entities';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { createPageUrl } from '../utils';
 import { 
@@ -56,7 +56,7 @@ export default function ScriptDetail() {
   const { data: script, isLoading } = useQuery({
     queryKey: ['script', scriptId],
     queryFn: async () => {
-      const scripts = await base44.entities.Script.filter({ id: scriptId });
+      const scripts = await Script.filter({ id: scriptId });
       return scripts[0];
     },
     enabled: !!scriptId,
@@ -64,16 +64,16 @@ export default function ScriptDetail() {
 
   const { data: projects = [] } = useQuery({
     queryKey: ['projects'],
-    queryFn: () => base44.entities.Project.list(),
+    queryFn: () => Project.list(),
   });
 
   const { data: currentUser } = useQuery({
     queryKey: ['currentUser'],
-    queryFn: () => base44.auth.me(),
+    queryFn: () => User.me(),
   });
 
   const updateMutation = useMutation({
-    mutationFn: (data) => base44.entities.Script.update(scriptId, data),
+    mutationFn: (data) => Script.update(scriptId, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['script', scriptId] });
       queryClient.invalidateQueries({ queryKey: ['scripts'] });

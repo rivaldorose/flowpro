@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import { Shot, Project } from '@/api/entities';
+import { UploadFile } from '@/api/integrations';
 import { Plus, ArrowUpDown, Film, Trash2, Search, Upload, X } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -48,16 +49,16 @@ export default function Shots() {
 
   const { data: shots = [], isLoading } = useQuery({
     queryKey: ['shots'],
-    queryFn: () => base44.entities.Shot.list('-shot_number'),
+    queryFn: () => Shot.list('-shot_number'),
   });
 
   const { data: projects = [] } = useQuery({
     queryKey: ['projects'],
-    queryFn: () => base44.entities.Project.list(),
+    queryFn: () => Project.list(),
   });
 
   const createMutation = useMutation({
-    mutationFn: (data) => base44.entities.Shot.create(data),
+    mutationFn: (data) => Shot.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['shots'] });
       closeForm();
@@ -65,14 +66,14 @@ export default function Shots() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.Shot.update(id, data),
+    mutationFn: ({ id, data }) => Shot.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['shots'] });
     },
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id) => base44.entities.Shot.delete(id),
+    mutationFn: (id) => Shot.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['shots'] });
     },
@@ -100,7 +101,7 @@ export default function Shots() {
 
     setUploadingImage(true);
     try {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      const { file_url } = await UploadFile({ file });
       setFormData(prev => ({ ...prev, reference_image: file_url }));
     } catch (error) {
       console.error('Image upload failed:', error);

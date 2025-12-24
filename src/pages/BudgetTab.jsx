@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import { Project, BudgetEntry } from '@/api/entities';
 import { 
   Coins, TrendingUp, Briefcase, Receipt, Wallet, BarChart3, 
   CheckCircle2, Circle, Clapperboard, Users, Camera, Scissors, Plus, 
@@ -33,7 +33,7 @@ export default function BudgetTab({ projectId }) {
     queryKey: ['project', projectId],
     queryFn: async () => {
       if (!projectId) return null;
-      const projects = await base44.entities.Project.filter({ id: projectId });
+      const projects = await Project.filter({ id: projectId });
       return projects[0];
     },
     enabled: !!projectId,
@@ -41,7 +41,7 @@ export default function BudgetTab({ projectId }) {
 
   const { data: budgetEntries = [] } = useQuery({
     queryKey: ['budgetEntries', projectId],
-    queryFn: () => base44.entities.BudgetEntry.list('-date'),
+    queryFn: () => BudgetEntry.list('-date'),
   });
 
   const [formData, setFormData] = useState({
@@ -56,7 +56,7 @@ export default function BudgetTab({ projectId }) {
   });
 
   const createMutation = useMutation({
-    mutationFn: (data) => base44.entities.BudgetEntry.create(data),
+    mutationFn: (data) => BudgetEntry.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['budgetEntries'] });
       setShowAddModal(false);

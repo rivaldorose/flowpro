@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import { PodcastEpisode, Business } from '@/api/entities';
 import { Plus, Mic, Calendar, TrendingUp, Filter, Search, Grid3X3, List } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '../utils';
@@ -58,16 +58,16 @@ export default function Podcasts() {
 
   const { data: episodes = [], isLoading } = useQuery({
     queryKey: ['podcastEpisodes'],
-    queryFn: () => base44.entities.PodcastEpisode.list('-episode_number'),
+    queryFn: () => PodcastEpisode.list('-episode_number'),
   });
 
   const { data: businesses = [] } = useQuery({
     queryKey: ['businesses'],
-    queryFn: () => base44.entities.Business.list(),
+    queryFn: () => Business.list(),
   });
 
   const createMutation = useMutation({
-    mutationFn: (data) => base44.entities.PodcastEpisode.create(data),
+    mutationFn: (data) => PodcastEpisode.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['podcastEpisodes'] });
       setShowForm(false);

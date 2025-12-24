@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { base44 } from '@/api/base44Client';
+import { Project, Shot, ShootSchedule, BudgetEntry, CrewMember } from '@/api/entities';
 import { 
   ArrowLeft, Settings, Share2, Download, ClipboardList, CalendarDays, 
   DollarSign, Users, PackageOpen, Plus, Search, Filter, Table, LayoutGrid,
@@ -43,7 +43,7 @@ export default function ProductionPlanning() {
     queryKey: ['project', projectId],
     queryFn: async () => {
       if (!projectId) return null;
-      const projects = await base44.entities.Project.filter({ id: projectId });
+      const projects = await Project.filter({ id: projectId });
       return projects[0];
     },
     enabled: !!projectId,
@@ -51,25 +51,25 @@ export default function ProductionPlanning() {
 
   const { data: shots = [] } = useQuery({
     queryKey: ['shots', projectId],
-    queryFn: () => base44.entities.Shot.list('-shot_number'),
+    queryFn: () => Shot.list('-shot_number'),
     enabled: !!projectId,
   });
 
   const { data: shoots = [] } = useQuery({
     queryKey: ['shoots', projectId],
-    queryFn: () => base44.entities.ShootSchedule.list('shoot_date'),
+    queryFn: () => ShootSchedule.list('shoot_date'),
     enabled: !!projectId,
   });
 
   const { data: budgetEntries = [] } = useQuery({
     queryKey: ['budgetEntries', projectId],
-    queryFn: () => base44.entities.BudgetEntry.list('-date'),
+    queryFn: () => BudgetEntry.list('-date'),
     enabled: !!projectId,
   });
 
   const { data: crew = [] } = useQuery({
     queryKey: ['crew'],
-    queryFn: () => base44.entities.CrewMember.list('name'),
+    queryFn: () => CrewMember.list('name'),
   });
 
   // Group shots by scene

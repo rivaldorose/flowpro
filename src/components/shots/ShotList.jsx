@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import { Shot } from '@/api/entities';
+import { UploadFile } from '@/api/integrations';
 import { Plus, ArrowUpDown, Filter, Edit2, Trash2, CheckCircle2, Circle, Film, Upload, X } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -59,12 +60,12 @@ export default function ShotList({ projectId }) {
 
   const { data: shots = [], isLoading } = useQuery({
     queryKey: ['shots', projectId],
-    queryFn: () => base44.entities.Shot.filter({ project_id: projectId }),
+    queryFn: () => Shot.filter({ project_id: projectId }),
     enabled: !!projectId,
   });
 
   const createMutation = useMutation({
-    mutationFn: (data) => base44.entities.Shot.create({ ...data, project_id: projectId }),
+    mutationFn: (data) => Shot.create({ ...data, project_id: projectId }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['shots', projectId] });
       closeForm();
@@ -72,7 +73,7 @@ export default function ShotList({ projectId }) {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.Shot.update(id, data),
+    mutationFn: ({ id, data }) => Shot.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['shots', projectId] });
       setEditingShot(null);
@@ -80,7 +81,7 @@ export default function ShotList({ projectId }) {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id) => base44.entities.Shot.delete(id),
+    mutationFn: (id) => Shot.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['shots', projectId] });
     },
@@ -107,7 +108,7 @@ export default function ShotList({ projectId }) {
 
     setUploadingImage(true);
     try {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      const { file_url } = await UploadFile({ file });
       setFormData(prev => ({ ...prev, reference_image: file_url }));
     } catch (error) {
       console.error('Image upload failed:', error);

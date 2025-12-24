@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import { User } from '@/api/entities';
+import { SendEmail } from '@/api/integrations';
 import { Users, Mail, UserPlus, Shield, User as UserIcon, Send } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -16,12 +17,12 @@ export default function Team() {
 
   const { data: users = [], isLoading } = useQuery({
     queryKey: ['users'],
-    queryFn: () => base44.entities.User.list(),
+    queryFn: () => User.list(),
   });
 
   const { data: currentUser } = useQuery({
     queryKey: ['currentUser'],
-    queryFn: () => base44.auth.me(),
+    queryFn: () => User.me(),
   });
 
   const isAdmin = currentUser?.role === 'admin';
@@ -34,7 +35,7 @@ export default function Team() {
     try {
       const appUrl = window.location.origin;
       
-      await base44.integrations.Core.SendEmail({
+      await SendEmail({
         to: inviteEmail,
         subject: 'Uitnodiging voor FlowPro',
         body: `

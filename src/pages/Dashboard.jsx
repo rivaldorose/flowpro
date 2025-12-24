@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
-import { base44 } from '@/api/base44Client';
+import { Project, Business, User } from '@/api/entities';
 import { 
   Clapperboard, Search, Bell, Plus, X, MoreHorizontal, Film, 
   Tv, Music, FileText, LayoutGrid, List, ChevronDown, 
@@ -58,17 +58,17 @@ export default function Dashboard() {
 
   const { data: projects = [], isLoading: projectsLoading } = useQuery({
     queryKey: ['projects'],
-    queryFn: () => base44.entities.Project.list('-created_date'),
+    queryFn: () => Project.list('-created_date'),
   });
 
   const { data: businesses = [] } = useQuery({
     queryKey: ['businesses'],
-    queryFn: () => base44.entities.Business.list(),
+    queryFn: () => Business.list(),
   });
 
   const { data: currentUser } = useQuery({
     queryKey: ['currentUser'],
-    queryFn: () => base44.auth.me(),
+    queryFn: () => User.me(),
   });
 
   const businessMap = businesses.reduce((acc, b) => ({ ...acc, [b.id]: b }), {});

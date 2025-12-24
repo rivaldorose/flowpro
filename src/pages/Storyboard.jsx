@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import { Project, Shot, StoryboardFrame } from '@/api/entities';
 import { ArrowLeft, Plus, Upload, Grid3X3, List as ListIcon, SplitSquareHorizontal, Image as ImageIcon, Link as LinkIcon } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '../utils';
@@ -37,7 +37,7 @@ export default function Storyboard() {
   const { data: project } = useQuery({
     queryKey: ['project', projectId],
     queryFn: async () => {
-      const projects = await base44.entities.Project.filter({ id: projectId });
+      const projects = await Project.filter({ id: projectId });
       return projects[0];
     },
     enabled: !!projectId,
@@ -45,13 +45,13 @@ export default function Storyboard() {
 
   const { data: shots = [], isLoading: shotsLoading } = useQuery({
     queryKey: ['shots', projectId],
-    queryFn: () => base44.entities.Shot.filter({ project_id: projectId }),
+    queryFn: () => Shot.filter({ project_id: projectId }),
     enabled: !!projectId,
   });
 
   const { data: frames = [] } = useQuery({
     queryKey: ['storyboardFrames', projectId],
-    queryFn: () => base44.entities.StoryboardFrame.filter({ project_id: projectId }),
+    queryFn: () => StoryboardFrame.filter({ project_id: projectId }),
     enabled: !!projectId,
   });
 

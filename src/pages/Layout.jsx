@@ -27,7 +27,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useQuery } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import { Business, BusinessAccess, User } from '@/api/entities';
 
 const navItems = [
   { name: 'Dashboard', icon: LayoutDashboard, page: 'Dashboard' },
@@ -54,17 +54,17 @@ export default function Layout({ children, currentPageName }) {
 
   const { data: currentUser } = useQuery({
     queryKey: ['currentUser'],
-    queryFn: () => base44.auth.me(),
+    queryFn: () => User.me(),
   });
 
   const { data: businesses = [] } = useQuery({
     queryKey: ['businesses'],
-    queryFn: () => base44.entities.Business.list(),
+    queryFn: () => Business.list(),
   });
 
   const { data: businessAccess = [] } = useQuery({
     queryKey: ['businessAccess', currentUser?.email],
-    queryFn: () => base44.entities.BusinessAccess.filter({ user_email: currentUser?.email }),
+    queryFn: () => BusinessAccess.filter({ user_email: currentUser?.email }),
     enabled: !!currentUser?.email && currentUser?.role !== 'admin',
   });
 
