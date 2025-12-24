@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { User } from '@/api/entities';
 import { UploadFile } from '@/api/integrations';
-import { User, Mail, Phone, Briefcase, Camera, Save, Loader2 } from 'lucide-react';
+import { User as UserIcon, Mail, Phone, Briefcase, Camera, Save, Loader2 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -92,7 +92,7 @@ export default function Profile() {
                 {formData.photo ? (
                   <img src={formData.photo} alt="Profiel" className="w-full h-full object-cover" />
                 ) : (
-                  <User className="w-16 h-16 text-white" />
+                  <UserIcon className="w-16 h-16 text-white" />
                 )}
               </div>
               <label htmlFor="photo-upload" className="absolute bottom-0 right-0 w-10 h-10 bg-emerald-500 hover:bg-emerald-600 rounded-full flex items-center justify-center cursor-pointer transition-colors">
@@ -130,7 +130,7 @@ export default function Profile() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div className="space-y-2">
                 <Label className="text-gray-300">
-                  <User className="w-4 h-4 inline mr-2" />
+                  <UserIcon className="w-4 h-4 inline mr-2" />
                   Volledige Naam *
                 </Label>
                 <Input
