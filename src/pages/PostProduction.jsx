@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { PostProduction, Project, CrewMember, PostVersion } from '@/api/entities';
+import { PostProduction as PostProductionEntity, Project, CrewMember, PostVersion } from '@/api/entities';
 import { UploadFile } from '@/api/integrations';
 import { Plus, Video, Upload, Clock, CheckCircle2, Trash2, User, Calendar, FileText } from 'lucide-react';
 import { Button } from "@/components/ui/button";
@@ -50,7 +50,7 @@ export default function PostProduction() {
 
   const { data: posts = [], isLoading } = useQuery({
     queryKey: ['postProduction'],
-    queryFn: () => PostProduction.list('-updated_date'),
+    queryFn: () => PostProductionEntity.list('-updated_date'),
   });
 
   const { data: projects = [] } = useQuery({
@@ -69,7 +69,7 @@ export default function PostProduction() {
   });
 
   const createMutation = useMutation({
-    mutationFn: (data) => PostProduction.create(data),
+    mutationFn: (data) => PostProductionEntity.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['postProduction'] });
       closeForm();
@@ -77,14 +77,14 @@ export default function PostProduction() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }) => PostProduction.update(id, data),
+    mutationFn: ({ id, data }) => PostProductionEntity.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['postProduction'] });
     },
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id) => PostProduction.delete(id),
+    mutationFn: (id) => PostProductionEntity.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['postProduction'] });
     },
