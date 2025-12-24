@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { createPageUrl } from '../utils';
 import { format } from 'date-fns';
 import BudgetTab from './BudgetTab';
+import ContactsTab from './ContactsTab';
 
 const SHOT_TYPES = {
   'WS': { label: 'WS', color: 'bg-blue-100 text-blue-700 border-blue-200' },
@@ -487,49 +488,7 @@ export default function ProductionPlanning() {
 
         {/* TAB 4: CONTACTS */}
         {activeTab === 'contacts' && (
-          <div className="h-full flex flex-col">
-            <div className="px-4 py-3 border-b border-gray-200 bg-white flex items-center justify-between shrink-0">
-              <h2 className="text-sm font-bold text-gray-900">Directory ({crew.length})</h2>
-              <div className="flex gap-2 text-xs">
-                <button className="px-3 py-1 bg-gray-900 text-white rounded-full">All</button>
-                <button className="px-3 py-1 bg-gray-50 border border-gray-200 rounded-full hover:border-gray-300">Cast</button>
-                <button className="px-3 py-1 bg-gray-50 border border-gray-200 rounded-full hover:border-gray-300">Crew</button>
-              </div>
-            </div>
-            
-            <div className="flex-1 overflow-auto bg-gray-50 p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {crew.map((member) => (
-                <div key={member.id} className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow relative group">
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold text-sm">
-                      {member.name?.charAt(0) || 'C'}
-                    </div>
-                    <span className="text-[10px] font-bold uppercase text-purple-600 bg-purple-50 px-2 py-0.5 rounded">Crew</span>
-                  </div>
-                  <h3 className="text-sm font-bold text-gray-900">{member.name}</h3>
-                  <p className="text-xs text-gray-500 mb-4">{member.role}</p>
-                  <div className="space-y-2 text-xs">
-                    {member.email && (
-                      <div className="flex items-center gap-2 text-gray-900 hover:text-purple-600 cursor-pointer transition-colors">
-                        <Mail className="w-3.5 h-3.5 text-gray-500" />
-                        {member.email}
-                      </div>
-                    )}
-                    {member.phone && (
-                      <div className="flex items-center gap-2 text-gray-900 hover:text-purple-600 cursor-pointer transition-colors">
-                        <Phone className="w-3.5 h-3.5 text-gray-500" />
-                        {member.phone}
-                      </div>
-                    )}
-                  </div>
-                  <div className="mt-4 pt-3 border-t border-gray-200 flex justify-between items-center text-[10px] text-gray-500">
-                    <span>Full Shoot</span>
-                    <span className="text-green-600 font-medium">Available</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+          <ContactsTab projectId={projectId} />
         )}
 
         {/* TAB 5: EQUIPMENT */}
