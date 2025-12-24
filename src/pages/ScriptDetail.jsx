@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { createPageUrl } from '../utils';
 import { 
   ArrowLeft, FileText, Clock, LayoutTemplate, MessageSquare, 
@@ -41,6 +41,7 @@ const parseScriptIntoScenes = (content) => {
 
 export default function ScriptDetail() {
   const navigate = useNavigate();
+  const location = useLocation();
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState('comments');
   const [activeScene, setActiveScene] = useState(1);
@@ -49,7 +50,7 @@ export default function ScriptDetail() {
   const [isEditing, setIsEditing] = useState(false);
   const [editorContent, setEditorContent] = useState('');
   
-  const urlParams = new URLSearchParams(window.location.search);
+  const urlParams = new URLSearchParams(location.search);
   const scriptId = urlParams.get('id');
 
   const { data: script, isLoading } = useQuery({
