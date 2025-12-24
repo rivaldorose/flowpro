@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
-import { useLocation, useNavigate, Routes, Route } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { 
   User, 
   Users, 
   Package, 
-  Settings as SettingsIcon,
   ChevronRight 
 } from 'lucide-react';
 import Profile from './Profile';
@@ -41,8 +40,9 @@ const settingsSections = [
 export default function Settings() {
   const location = useLocation();
   const navigate = useNavigate();
-  const [activeSection, setActiveSection] = useState(() => {
-    // Determine active section from current path
+  
+  // Determine active section from current path
+  const getActiveSection = () => {
     if (location.pathname === '/settings' || location.pathname === '/settings/') {
       return 'profile';
     }
@@ -53,10 +53,11 @@ export default function Settings() {
       return 'equipment';
     }
     return 'profile';
-  });
+  };
+  
+  const activeSection = getActiveSection();
 
   const handleSectionClick = (section) => {
-    setActiveSection(section.id);
     navigate(section.path);
   };
 
