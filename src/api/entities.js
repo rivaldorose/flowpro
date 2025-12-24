@@ -100,6 +100,10 @@ export const PodcastEpisode = new Entity('podcast_episodes')
 export const PodcastChecklist = new Entity('podcast_checklists')
 export const StoryboardFrame = new Entity('storyboard_frames')
 export const ProjectAttachment = new Entity('project_attachments')
+export const EquipmentItem = new Entity('equipment_items')
+export const EquipmentCategory = new Entity('equipment_categories')
+export const ProjectTeamMember = new Entity('project_team_members')
+export const ProjectInvitation = new Entity('project_invitations')
 
 // Auth wrapper
 export const User = {

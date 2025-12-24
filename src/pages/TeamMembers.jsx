@@ -1,5 +1,8 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { ProjectTeamMember, ProjectInvitation, Project, User } from '@/api/entities'
+import { supabase } from '@/lib/supabase'
 import { 
   ArrowLeft, 
   UserPlus, 
@@ -26,6 +29,7 @@ import {
 
 export default function TeamMembers() {
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const [inviteModalOpen, setInviteModalOpen] = useState(false)
   const [matrixOpen, setMatrixOpen] = useState(false)
   const [visibility, setVisibility] = useState('private')
@@ -39,7 +43,66 @@ export default function TeamMembers() {
   const [inviteRole, setInviteRole] = useState('editor')
   const [inviteMessage, setInviteMessage] = useState('')
   const [sendNotification, setSendNotification] = useState(true)
-  const [emailTags, setEmailTags] = useState(['designer@studio.com'])
+  const [emailTags, setEmailTags] = useState([])
+
+  // Fetch current user
+  const { data: currentUser } = useQuery({
+    queryKey: ['currentUser'],
+    queryFn: () => User.me(),
+  })
+
+  // Fetch team members for all projects the user has access to
+  const { data: teamMembers = [], isLoading: loadingMembers } = useQuery({
+    queryKey: ['teamMembers'],
+    queryFn: async () => {
+      if (!currentUser?.id) return []
+      
+      const { data, error } = await supabase
+        .from('project_team_members')
+        .select(`
+          *,
+          users:user_id (
+            id,
+            email,
+            full_name,
+            avatar_url
+          ),
+          projects:project_id (
+            id,
+            title
+          )
+        `)
+        .eq('status', 'active')
+      
+      if (error) throw error
+      return data || []
+    },
+    enabled: !!currentUser?.id
+  })
+
+  // Fetch pending invitations
+  const { data: invitations = [], isLoading: loadingInvitations } = useQuery({
+    queryKey: ['projectInvitations'],
+    queryFn: async () => {
+      if (!currentUser?.id) return []
+      
+      const { data, error } = await supabase
+        .from('project_invitations')
+        .select(`
+          *,
+          projects:project_id (
+            id,
+            title
+          )
+        `)
+        .is('accepted_at', null)
+        .gt('expires_at', new Date().toISOString())
+      
+      if (error) throw error
+      return data || []
+    },
+    enabled: !!currentUser?.id
+  })
 
   const toggleModal = () => {
     setInviteModalOpen(!inviteModalOpen)
@@ -208,33 +271,54 @@ export default function TeamMembers() {
             </div>
 
             {/* Pending Invites */}
-            <div className="mt-6 border-t border-[#E5E7EB] pt-6">
-              <h3 className="text-sm font-semibold text-[#1F2937] mb-3 flex items-center gap-2">
-                Pending Invitations
-                <span className="px-1.5 py-0.5 bg-gray-100 text-[#6B7280] rounded-full text-xs font-normal">1</span>
-              </h3>
-              <div className="bg-white border border-[#E5E7EB] rounded-lg divide-y divide-[#E5E7EB]">
-                <div className="p-3 flex items-center justify-between group hover:bg-gray-50 transition-colors">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-500">
-                      <Mail className="w-3.5 h-3.5" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-[#1F2937]">alex@production.co</p>
-                      <p className="text-xs text-[#6B7280]">Invited as <span className="text-[#3B82F6] font-medium">Editor</span> • Sent Mar 20</p>
-                    </div>
+            {invitations.length > 0 && (
+              <div className="mt-6 border-t border-[#E5E7EB] pt-6">
+                <h3 className="text-sm font-semibold text-[#1F2937] mb-3 flex items-center gap-2">
+                  Pending Invitations
+                  <span className="px-1.5 py-0.5 bg-gray-100 text-[#6B7280] rounded-full text-xs font-normal">
+                    {invitations.length}
+                  </span>
+                </h3>
+                {loadingInvitations ? (
+                  <div className="flex items-center justify-center py-8">
+                    <Loader2 className="w-5 h-5 animate-spin text-[#6B7280]" />
                   </div>
-                  <div className="flex items-center gap-2 opacity-60 group-hover:opacity-100 transition-opacity">
-                    <button className="p-1.5 text-[#6B7280] hover:text-[#3B82F6] hover:bg-[#3B82F6]/10 rounded transition-colors" title="Resend">
-                      <Send className="w-3.5 h-3.5" />
-                    </button>
-                    <button className="p-1.5 text-[#6B7280] hover:text-[#EF4444] hover:bg-[#EF4444]/10 rounded transition-colors" title="Cancel">
-                      <X className="w-3.5 h-3.5" />
-                    </button>
+                ) : (
+                  <div className="bg-white border border-[#E5E7EB] rounded-lg divide-y divide-[#E5E7EB]">
+                    {invitations.map((invitation) => {
+                      const project = invitation.projects
+                      return (
+                        <div key={invitation.id} className="p-3 flex items-center justify-between group hover:bg-gray-50 transition-colors">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-500">
+                              <Mail className="w-3.5 h-3.5" />
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium text-[#1F2937]">{invitation.email}</p>
+                              <p className="text-xs text-[#6B7280]">
+                                Invited as <span className="text-[#3B82F6] font-medium capitalize">{invitation.role}</span>
+                                {project && <span> • {project.title}</span>}
+                                {invitation.created_at && (
+                                  <span> • Sent {new Date(invitation.created_at).toLocaleDateString()}</span>
+                                )}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2 opacity-60 group-hover:opacity-100 transition-opacity">
+                            <button className="p-1.5 text-[#6B7280] hover:text-[#3B82F6] hover:bg-[#3B82F6]/10 rounded transition-colors" title="Resend">
+                              <Send className="w-3.5 h-3.5" />
+                            </button>
+                            <button className="p-1.5 text-[#6B7280] hover:text-[#EF4444] hover:bg-[#EF4444]/10 rounded transition-colors" title="Cancel">
+                              <X className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </div>
+                      )
+                    })}
                   </div>
-                </div>
+                )}
               </div>
-            </div>
+            )}
           </section>
 
           {/* SECTION 2: TEAM SETTINGS */}
