@@ -213,6 +213,15 @@ function PagesContent() {
             <Route path="/DocumentaryTemplate" element={<ProfileGuard><DocumentaryTemplate /></ProfileGuard>} />
             <Route path="/templates/documentary" element={<ProfileGuard><DocumentaryTemplate /></ProfileGuard>} />
             
+            {/* Settings route - redirect to Profile */}
+            <Route path="/settings" element={
+                <ProfileGuard>
+                    <AppLayout>
+                        <Profile />
+                    </AppLayout>
+                </ProfileGuard>
+            } />
+            
             {/* OLD Routes with Legacy Layout (backwards compatible) - Protected by ProfileGuard */}
             <Route path="*" element={
                 <ProfileGuard>

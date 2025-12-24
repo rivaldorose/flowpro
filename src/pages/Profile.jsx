@@ -67,24 +67,27 @@ export default function Profile() {
 
   if (isLoading) {
     return (
-      <div className="space-y-6">
-        <Skeleton className="h-12 w-64 bg-[#22262b]" />
-        <Skeleton className="h-96 bg-[#22262b]" />
+      <div className="min-h-screen bg-gray-50 p-6">
+        <div className="max-w-3xl mx-auto space-y-6">
+          <Skeleton className="h-12 w-64 bg-white" />
+          <Skeleton className="h-96 bg-white" />
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6">
-      {/* Header */}
-      <div>
-        <h1 className="text-2xl lg:text-3xl font-bold text-white">Mijn Profiel</h1>
-        <p className="text-gray-500 mt-1">Beheer je persoonlijke informatie</p>
-      </div>
+    <div className="min-h-screen bg-gray-50 p-6">
+      <div className="max-w-3xl mx-auto space-y-6">
+        {/* Header */}
+        <div>
+          <h1 className="text-2xl lg:text-3xl font-bold text-gray-900">Mijn Profiel</h1>
+          <p className="text-gray-600 mt-1">Beheer je persoonlijke informatie</p>
+        </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Profile Card */}
-        <div className="bg-[#22262b] rounded-2xl p-8 border border-gray-800/50">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Profile Card */}
+          <div className="bg-white rounded-xl p-8 border border-gray-200 shadow-sm">
           {/* Photo Section */}
           <div className="flex flex-col md:flex-row items-start gap-8 mb-8">
             <div className="relative">
@@ -113,13 +116,13 @@ export default function Profile() {
             </div>
 
             <div className="flex-1">
-              <h2 className="text-2xl font-bold text-white mb-2">{currentUser?.full_name}</h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">{currentUser?.full_name}</h2>
               <div className="flex items-center gap-2 mb-4">
-                <Badge variant="outline" className="border-emerald-500/30 text-emerald-400 bg-emerald-500/10">
+                <Badge variant="outline" className="border-emerald-500 text-emerald-700 bg-emerald-50">
                   {currentUser?.role === 'admin' ? 'Administrator' : 'Gebruiker'}
                 </Badge>
               </div>
-              <p className="text-gray-400 text-sm">
+              <p className="text-gray-600 text-sm">
                 Lid sinds {new Date(currentUser?.created_date).toLocaleDateString('nl-NL', { year: 'numeric', month: 'long' })}
               </p>
             </div>
@@ -129,56 +132,56 @@ export default function Profile() {
           <div className="space-y-5">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div className="space-y-2">
-                <Label className="text-gray-300">
+                <Label className="text-gray-700">
                   <UserIcon className="w-4 h-4 inline mr-2" />
                   Volledige Naam *
                 </Label>
                 <Input
                   value={formData.full_name}
                   onChange={(e) => setFormData(prev => ({ ...prev, full_name: e.target.value }))}
-                  className="bg-[#1a1d21] border-gray-700 text-white"
+                  className="bg-white border-gray-300"
                   placeholder="Jouw naam"
                   required
                 />
               </div>
 
               <div className="space-y-2">
-                <Label className="text-gray-300">
+                <Label className="text-gray-700">
                   <Mail className="w-4 h-4 inline mr-2" />
                   E-mailadres
                 </Label>
                 <Input
                   value={currentUser?.email}
-                  className="bg-[#1a1d21] border-gray-700 text-gray-500"
+                  className="bg-gray-50 border-gray-300 text-gray-500"
                   disabled
                 />
-                <p className="text-xs text-gray-600">E-mail kan niet worden gewijzigd</p>
+                <p className="text-xs text-gray-500">E-mail kan niet worden gewijzigd</p>
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div className="space-y-2">
-                <Label className="text-gray-300">
+                <Label className="text-gray-700">
                   <Phone className="w-4 h-4 inline mr-2" />
                   Telefoonnummer
                 </Label>
                 <Input
                   value={formData.phone}
                   onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
-                  className="bg-[#1a1d21] border-gray-700 text-white"
+                  className="bg-white border-gray-300"
                   placeholder="+31 6 1234 5678"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label className="text-gray-300">
+                <Label className="text-gray-700">
                   <Briefcase className="w-4 h-4 inline mr-2" />
                   Functie
                 </Label>
                 <Input
                   value={formData.job_title}
                   onChange={(e) => setFormData(prev => ({ ...prev, job_title: e.target.value }))}
-                  className="bg-[#1a1d21] border-gray-700 text-white"
+                  className="bg-white border-gray-300"
                   placeholder="Bijv. Producer, Editor"
                 />
               </div>
