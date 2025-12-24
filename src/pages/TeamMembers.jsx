@@ -104,6 +104,32 @@ export default function TeamMembers() {
     enabled: !!currentUser?.id
   })
 
+  // Fetch activity log entries
+  const { data: activityLog = [], isLoading: loadingActivityLog } = useQuery({
+    queryKey: ['activityLog'],
+    queryFn: async () => {
+      if (!currentUser?.id) return []
+      
+      const { data, error } = await supabase
+        .from('activity_log')
+        .select(`
+          *,
+          users:user_id (
+            id,
+            email,
+            full_name,
+            avatar_url
+          )
+        `)
+        .order('created_at', { ascending: false })
+        .limit(10)
+      
+      if (error) throw error
+      return data || []
+    },
+    enabled: !!currentUser?.id
+  })
+
   const toggleModal = () => {
     setInviteModalOpen(!inviteModalOpen)
     document.body.style.overflow = inviteModalOpen ? 'auto' : 'hidden'
@@ -652,22 +678,56 @@ export default function TeamMembers() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[#E5E7EB]">
-                    <tr className="bg-white hover:bg-gray-50 transition-colors">
-                      <td className="px-6 py-3 font-medium text-[#1F2937] flex items-center gap-2">
-                        <div className="w-6 h-6 rounded-full bg-[#6B46C1]/10 text-[#6B46C1] text-[10px] flex items-center justify-center font-bold">SJ</div>
-                        Sarah Johnson
-                      </td>
-                      <td className="px-6 py-3 text-[#6B7280]">Changed project settings</td>
-                      <td className="px-6 py-3 text-[#6B7280] text-xs">Mar 20, 2:15 PM</td>
-                    </tr>
-                    <tr className="bg-white hover:bg-gray-50 transition-colors">
-                      <td className="px-6 py-3 font-medium text-[#1F2937] flex items-center gap-2">
-                        <div className="w-6 h-6 rounded-full bg-[#3B82F6]/10 text-[#3B82F6] text-[10px] flex items-center justify-center font-bold">JS</div>
-                        John Smith
-                      </td>
-                      <td className="px-6 py-3 text-[#6B7280]">Edited <span className="text-[#1F2937] font-medium">Screenplay v2</span></td>
-                      <td className="px-6 py-3 text-[#6B7280] text-xs">Mar 20, 10:42 AM</td>
-                    </tr>
+                    {loadingActivityLog ? (
+                      <tr>
+                        <td colSpan={3} className="px-6 py-12 text-center">
+                          <Loader2 className="w-5 h-5 animate-spin text-[#6B7280] mx-auto" />
+                        </td>
+                      </tr>
+                    ) : activityLog.length === 0 ? (
+                      <tr>
+                        <td colSpan={3} className="px-6 py-12 text-center text-[#6B7280]">
+                          No activity logged yet
+                        </td>
+                      </tr>
+                    ) : (
+                      activityLog.map((activity) => {
+                        const user = activity.users
+                        const initials = user?.full_name
+                          ?.split(' ')
+                          .map(n => n[0])
+                          .join('')
+                          .toUpperCase()
+                          .slice(0, 2) || '?'
+                        
+                        const colors = ['#6B46C1', '#3B82F6', '#10B981', '#F59E0B', '#EF4444']
+                        const colorIndex = (user?.id?.charCodeAt(0) || 0) % colors.length
+                        const userColor = colors[colorIndex]
+
+                        return (
+                          <tr key={activity.id} className="bg-white hover:bg-gray-50 transition-colors">
+                            <td className="px-6 py-3 font-medium text-[#1F2937] flex items-center gap-2">
+                              <div 
+                                className="w-6 h-6 rounded-full text-[10px] flex items-center justify-center font-bold text-white"
+                                style={{ backgroundColor: `${userColor}40`, color: userColor }}
+                              >
+                                {initials}
+                              </div>
+                              {user?.full_name || user?.email || 'Unknown User'}
+                            </td>
+                            <td className="px-6 py-3 text-[#6B7280]">{activity.description}</td>
+                            <td className="px-6 py-3 text-[#6B7280] text-xs">
+                              {new Date(activity.created_at).toLocaleDateString('en-US', {
+                                month: 'short',
+                                day: 'numeric',
+                                hour: 'numeric',
+                                minute: '2-digit'
+                              })}
+                            </td>
+                          </tr>
+                        )
+                      })
+                    )}
                   </tbody>
                 </table>
               </div>

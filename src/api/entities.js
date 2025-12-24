@@ -104,6 +104,7 @@ export const EquipmentItem = new Entity('equipment_items')
 export const EquipmentCategory = new Entity('equipment_categories')
 export const ProjectTeamMember = new Entity('project_team_members')
 export const ProjectInvitation = new Entity('project_invitations')
+export const ActivityLog = new Entity('activity_log')
 
 // Auth wrapper
 export const User = {
