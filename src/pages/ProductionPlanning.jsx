@@ -5,7 +5,8 @@ import { base44 } from '@/api/base44Client';
 import { 
   ArrowLeft, Settings, Share2, Download, ClipboardList, CalendarDays, 
   DollarSign, Users, PackageOpen, Plus, Search, Filter, Table, LayoutGrid,
-  MoreHorizontal, CheckCircle2, Circle, Image, ListVideo, Sparkles, Mail, Phone
+  MoreHorizontal, CheckCircle2, Circle, Image, ListVideo, Sparkles, Mail, Phone,
+  MapPin
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,6 +14,7 @@ import { createPageUrl } from '../utils';
 import { format } from 'date-fns';
 import BudgetTab from './BudgetTab';
 import ContactsTab from './ContactsTab';
+import LocationsTab from './LocationsTab';
 
 const SHOT_TYPES = {
   'WS': { label: 'WS', color: 'bg-blue-100 text-blue-700 border-blue-200' },
@@ -211,6 +213,23 @@ export default function ProductionPlanning() {
               Contacts
             </div>
             {activeTab === 'contacts' && (
+              <span className="absolute bottom-0 left-0 w-full h-[3px] bg-purple-600 rounded-t-full"></span>
+            )}
+          </button>
+
+          <button 
+            onClick={() => setActiveTab('locations')}
+            className={`group relative py-3 px-1 text-xs font-medium transition-colors ${
+              activeTab === 'locations' 
+                ? 'text-purple-600 font-bold' 
+                : 'text-gray-500 hover:text-gray-900'
+            }`}
+          >
+            <div className="flex items-center gap-2">
+              <MapPin className="w-4 h-4" />
+              Locations
+            </div>
+            {activeTab === 'locations' && (
               <span className="absolute bottom-0 left-0 w-full h-[3px] bg-purple-600 rounded-t-full"></span>
             )}
           </button>
