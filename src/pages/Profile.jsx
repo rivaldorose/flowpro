@@ -211,20 +211,22 @@ export default function Profile() {
         </div>
       </form>
 
-      {/* Logout Section */}
-      <div className="bg-gradient-to-br from-red-500/10 to-orange-500/10 rounded-2xl p-6 border border-red-500/20">
-        <h3 className="text-lg font-semibold text-white mb-2">Uitloggen</h3>
-        <p className="text-gray-400 text-sm mb-4">
-          Je wordt uitgelogd en teruggestuurd naar het inlogscherm.
-        </p>
-        <Button 
-          variant="outline" 
-          onClick={() => User.signOut()}
-          className="border-red-500/30 text-red-400 hover:bg-red-500/10"
-        >
-          Uitloggen
-        </Button>
+        {/* Logout Section */}
+        <div className="bg-white rounded-xl p-6 border border-red-200 shadow-sm">
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">Uitloggen</h3>
+          <p className="text-gray-600 text-sm mb-4">
+            Je wordt uitgelogd en teruggestuurd naar het inlogscherm.
+          </p>
+          <Button 
+            variant="outline" 
+            onClick={() => User.signOut()}
+            className="border-red-300 text-red-600 hover:bg-red-50"
+          >
+            Uitloggen
+          </Button>
+        </div>
       </div>
+    </div>
     </div>
   );
 }
