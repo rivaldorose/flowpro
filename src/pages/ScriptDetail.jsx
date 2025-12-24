@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { format } from 'date-fns';
 import { nl } from 'date-fns/locale';
 import ScriptBreakdown from '../components/script/ScriptBreakdown';
+import ScriptEditor from '../components/script/ScriptEditor';
 
 // Parse script content into scenes (simplified - you may want to enhance this)
 const parseScriptIntoScenes = (content) => {
@@ -45,6 +46,8 @@ export default function ScriptDetail() {
   const [activeScene, setActiveScene] = useState(1);
   const [commentFilter, setCommentFilter] = useState('all');
   const [newComment, setNewComment] = useState('');
+  const [isEditing, setIsEditing] = useState(false);
+  const [editorContent, setEditorContent] = useState('');
   
   const urlParams = new URLSearchParams(window.location.search);
   const scriptId = urlParams.get('id');
@@ -73,6 +76,7 @@ export default function ScriptDetail() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['script', scriptId] });
       queryClient.invalidateQueries({ queryKey: ['scripts'] });
+      setIsEditing(false);
     },
   });
 
@@ -266,108 +270,70 @@ export default function ScriptDetail() {
         <main className="flex-1 bg-gray-50 overflow-y-auto relative scroll-smooth">
           <div className="max-w-4xl mx-auto py-10 px-6 pb-40 space-y-8">
             
-            {/* Script Content */}
-            {script.content ? (
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 md:p-12 relative overflow-hidden">
-                <div className="absolute top-4 left-4 text-[10px] font-mono font-bold text-gray-500 bg-gray-50 px-2 py-1 rounded border border-gray-200">
-                  SCENE {activeScene}
-                </div>
-                
-                <div className="absolute top-6 right-6">
+            {/* Script Content with Rich Text Editor */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 md:p-6 relative overflow-hidden">
+              <div className="absolute top-4 left-4 text-[10px] font-mono font-bold text-gray-500 bg-gray-50 px-2 py-1 rounded border border-gray-200 z-10">
+                SCENE {activeScene}
+              </div>
+              
+              <div className="absolute top-4 right-4 z-10">
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      if (isEditing) {
+                        updateMutation.mutate({ content: editorContent });
+                      }
+                      setIsEditing(!isEditing);
+                    }}
+                    className="text-xs"
+                  >
+                    {isEditing ? 'Save' : 'Edit'}
+                  </Button>
                   <button className="text-gray-400 hover:text-gray-900 transition-colors">
                     <MoreHorizontal className="w-5 h-5" />
                   </button>
                 </div>
+              </div>
 
-                {/* Script Content with Formatting */}
-                <div className="font-mono text-[17px] leading-relaxed text-gray-900 mt-6 whitespace-pre-wrap">
-                  {script.content.split('\n').map((line, index) => {
-                    const trimmedLine = line.trim();
-                    
-                    // Scene heading
-                    if (/^(INT\.|EXT\.|INT\/EXT\.)/i.test(trimmedLine)) {
-                      return (
-                        <div key={index} className="font-bold mb-6 script-line relative group">
-                          {trimmedLine}
-                          <button className="comment-trigger absolute -right-12 top-0 opacity-0 transition-opacity cursor-pointer text-gray-400 hover:text-purple-600 p-1 group-hover:opacity-100">
-                            <MessageSquarePlus className="w-4.5 h-4.5" />
-                          </button>
-                        </div>
-                      );
-                    }
-                    
-                    // Character name (all caps, centered)
-                    if (/^[A-Z\s]+$/.test(trimmedLine) && trimmedLine.length < 30 && !trimmedLine.includes('.')) {
-                      return (
-                        <div key={index} className="mb-0.5 script-line relative group" style={{ marginLeft: '35%', width: '40%' }}>
-                          <div className="font-bold">{trimmedLine}</div>
-                          <button className="comment-trigger absolute -right-12 top-1 opacity-0 transition-opacity cursor-pointer text-gray-400 hover:text-purple-600 p-1 group-hover:opacity-100">
-                            <MessageSquarePlus className="w-4.5 h-4.5" />
-                          </button>
-                        </div>
-                      );
-                    }
-                    
-                    // Parenthetical
-                    if (/^\(.+\)$/.test(trimmedLine)) {
-                      return (
-                        <div key={index} className="mb-0.5 script-line relative group italic" style={{ marginLeft: '30%', width: '40%' }}>
-                          {trimmedLine}
-                          <button className="comment-trigger absolute -right-12 top-1 opacity-0 transition-opacity cursor-pointer text-gray-400 hover:text-purple-600 p-1 group-hover:opacity-100">
-                            <MessageSquarePlus className="w-4.5 h-4.5" />
-                          </button>
-                        </div>
-                      );
-                    }
-                    
-                    // Dialogue
-                    if (trimmedLine && !trimmedLine.startsWith('(') && !trimmedLine.match(/^(INT\.|EXT\.|INT\/EXT\.)/i)) {
-                      return (
-                        <div key={index} className="mb-4 script-line relative group" style={{ marginLeft: '20%', width: '60%' }}>
-                          {trimmedLine}
-                          <button className="comment-trigger absolute -right-12 top-1 opacity-0 transition-opacity cursor-pointer text-gray-400 hover:text-purple-600 p-1 group-hover:opacity-100">
-                            <MessageSquarePlus className="w-4.5 h-4.5" />
-                          </button>
-                        </div>
-                      );
-                    }
-                    
-                    // Empty line
-                    return <div key={index} className="mb-2"></div>;
-                  })}
-                </div>
+              {/* Rich Text Editor */}
+              <div className="mt-8">
+                {isEditing ? (
+                  <ScriptEditor
+                    content={editorContent}
+                    onChange={(html) => {
+                      setEditorContent(html);
+                    }}
+                    placeholder="Start writing your script..."
+                  />
+                ) : (
+                  <div 
+                    className="prose prose-sm max-w-none font-mono text-[17px] leading-relaxed text-gray-900 p-6"
+                    dangerouslySetInnerHTML={{ __html: editorContent || '<p class="text-gray-400 italic">No content yet. Click Edit to start writing.</p>' }}
+                  />
+                )}
+              </div>
 
-                {/* Scene Footer */}
-                <div className="mt-12 pt-4 border-t border-gray-200 flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-50 rounded-md border border-gray-200 hover:border-purple-500/50 cursor-pointer group transition-all">
-                      <Image className="w-4 h-4 text-purple-600" />
-                      <span className="text-xs font-medium text-gray-900">Storyboards</span>
-                      <span className="bg-gray-200 text-gray-600 text-[10px] px-1.5 rounded-full font-bold ml-1 group-hover:bg-purple-600 group-hover:text-white transition-colors">5</span>
-                    </div>
-                    <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-50 rounded-md border border-gray-200 hover:border-orange-500/50 cursor-pointer group transition-all">
-                      <ListVideo className="w-4 h-4 text-orange-500" />
-                      <span className="text-xs font-medium text-gray-900">Shot List</span>
-                      <Plus className="w-3 h-3 text-gray-400 ml-1" />
-                    </div>
+              {/* Scene Footer */}
+              <div className="mt-8 pt-4 border-t border-gray-200 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-50 rounded-md border border-gray-200 hover:border-purple-500/50 cursor-pointer group transition-all">
+                    <Image className="w-4 h-4 text-purple-600" />
+                    <span className="text-xs font-medium text-gray-900">Storyboards</span>
+                    <span className="bg-gray-200 text-gray-600 text-[10px] px-1.5 rounded-full font-bold ml-1 group-hover:bg-purple-600 group-hover:text-white transition-colors">5</span>
                   </div>
-                  <div className="text-[10px] text-gray-500 font-mono">
-                    EST. {estimatedRuntime} MIN
+                  <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-50 rounded-md border border-gray-200 hover:border-orange-500/50 cursor-pointer group transition-all">
+                    <ListVideo className="w-4 h-4 text-orange-500" />
+                    <span className="text-xs font-medium text-gray-900">Shot List</span>
+                    <Plus className="w-3 h-3 text-gray-400 ml-1" />
                   </div>
                 </div>
+                <div className="text-[10px] text-gray-500 font-mono">
+                  EST. {estimatedRuntime} MIN
+                </div>
               </div>
-            ) : (
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
-                <FileText className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                <p className="text-gray-500 mb-6">No script content yet</p>
-                <Button 
-                  onClick={() => navigate(createPageUrl(`ScriptDetail?id=${scriptId}&edit=true`))}
-                  className="bg-purple-600 hover:bg-purple-700"
-                >
-                  Start Writing
-                </Button>
-              </div>
-            )}
+            </div>
 
             {/* Add Scene Button */}
             <div className="flex justify-center py-4">
