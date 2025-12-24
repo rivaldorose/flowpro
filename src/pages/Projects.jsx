@@ -101,138 +101,140 @@ export default function Projects() {
   });
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl lg:text-3xl font-bold text-white">Alle Projecten</h1>
-          <p className="text-gray-500 mt-1">{projects.length} projecten totaal</p>
-        </div>
-        <Button 
-          onClick={() => setShowForm(true)}
-          className="bg-emerald-500 hover:bg-emerald-600 text-white gap-2"
-        >
-          <Plus className="w-4 h-4" />
-          Nieuw Project
-        </Button>
-      </div>
-
-      {/* Filters */}
-      <div className="bg-[#22262b] rounded-2xl p-4 border border-gray-800/50">
-        <div className="flex flex-col lg:flex-row gap-4">
-          <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
-            <Input
-              placeholder="Zoek projecten..."
-              value={filters.search}
-              onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
-              className="pl-10 bg-[#1a1d21] border-gray-700 text-white"
-            />
+    <div className="min-h-screen bg-gray-50 p-6">
+      <div className="max-w-7xl mx-auto space-y-6">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="text-2xl lg:text-3xl font-bold text-gray-900">Alle Projecten</h1>
+            <p className="text-gray-600 mt-1">{projects.length} projecten totaal</p>
           </div>
-          
-          <div className="flex flex-wrap gap-3">
-            <Select value={filters.business} onValueChange={(v) => setFilters(prev => ({ ...prev, business: v }))}>
-              <SelectTrigger className="w-40 bg-[#1a1d21] border-gray-700 text-white">
-                <SelectValue placeholder="Business" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Alle Businesses</SelectItem>
-                {businesses.map(b => (
-                  <SelectItem key={b.id} value={b.id}>{b.name}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          <Button 
+            onClick={() => setShowForm(true)}
+            className="bg-emerald-500 hover:bg-emerald-600 text-white gap-2"
+          >
+            <Plus className="w-4 h-4" />
+            Nieuw Project
+          </Button>
+        </div>
 
-            <Select value={filters.status} onValueChange={(v) => setFilters(prev => ({ ...prev, status: v }))}>
-              <SelectTrigger className="w-40 bg-[#1a1d21] border-gray-700 text-white">
-                <SelectValue placeholder="Status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Alle Statussen</SelectItem>
-                {STATUSES.map(s => (
-                  <SelectItem key={s} value={s}>{s}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+        {/* Filters */}
+        <div className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+          <div className="flex flex-col lg:flex-row gap-4">
+            <div className="flex-1 relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <Input
+                placeholder="Zoek projecten..."
+                value={filters.search}
+                onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
+                className="pl-10 bg-white border-gray-300"
+              />
+            </div>
+            
+            <div className="flex flex-wrap gap-3">
+              <Select value={filters.business} onValueChange={(v) => setFilters(prev => ({ ...prev, business: v }))}>
+                <SelectTrigger className="w-40 bg-white border-gray-300">
+                  <SelectValue placeholder="Business" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Alle Businesses</SelectItem>
+                  {businesses.map(b => (
+                    <SelectItem key={b.id} value={b.id}>{b.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
 
-            <div className="flex border border-gray-700 rounded-lg overflow-hidden">
-              <Button
-                variant={viewMode === 'grid' ? 'secondary' : 'ghost'}
-                size="icon"
-                onClick={() => setViewMode('grid')}
-                className={viewMode === 'grid' ? 'bg-emerald-500/20 text-emerald-400' : 'text-gray-400'}
-              >
-                <Grid3X3 className="w-4 h-4" />
-              </Button>
-              <Button
-                variant={viewMode === 'list' ? 'secondary' : 'ghost'}
-                size="icon"
-                onClick={() => setViewMode('list')}
-                className={viewMode === 'list' ? 'bg-emerald-500/20 text-emerald-400' : 'text-gray-400'}
-              >
-                <List className="w-4 h-4" />
-              </Button>
+              <Select value={filters.status} onValueChange={(v) => setFilters(prev => ({ ...prev, status: v }))}>
+                <SelectTrigger className="w-40 bg-white border-gray-300">
+                  <SelectValue placeholder="Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Alle Statussen</SelectItem>
+                  {STATUSES.map(s => (
+                    <SelectItem key={s} value={s}>{s}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              <div className="flex border border-gray-300 rounded-lg overflow-hidden bg-white">
+                <Button
+                  variant={viewMode === 'grid' ? 'secondary' : 'ghost'}
+                  size="icon"
+                  onClick={() => setViewMode('grid')}
+                  className={viewMode === 'grid' ? 'bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20' : 'text-gray-600'}
+                >
+                  <Grid3X3 className="w-4 h-4" />
+                </Button>
+                <Button
+                  variant={viewMode === 'list' ? 'secondary' : 'ghost'}
+                  size="icon"
+                  onClick={() => setViewMode('list')}
+                  className={viewMode === 'list' ? 'bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20' : 'text-gray-600'}
+                >
+                  <List className="w-4 h-4" />
+                </Button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Projects Grid */}
-      {isLoading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-          {[1, 2, 3, 4, 5, 6].map(i => (
-            <Skeleton key={i} className="h-48 bg-[#22262b]" />
-          ))}
-        </div>
-      ) : filteredProjects.length === 0 ? (
-        <div className="bg-[#22262b] rounded-2xl p-12 text-center border border-gray-800/50">
-          <p className="text-gray-400 mb-4">Geen projecten gevonden</p>
-          <Button onClick={() => setShowForm(true)} className="bg-emerald-500 hover:bg-emerald-600">
-            Maak je eerste project
-          </Button>
-        </div>
-      ) : (
-        <div className={viewMode === 'grid' 
-          ? "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4"
-          : "space-y-3"
-        }>
-          {filteredProjects.map(project => (
-            <ProjectCard 
-              key={project.id} 
-              project={project} 
-              business={businessMap[project.business_id]} 
-            />
-          ))}
-        </div>
-      )}
+        {/* Projects Grid */}
+        {isLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+            {[1, 2, 3, 4, 5, 6].map(i => (
+              <Skeleton key={i} className="h-48 bg-white" />
+            ))}
+          </div>
+        ) : filteredProjects.length === 0 ? (
+          <div className="bg-white rounded-xl p-12 text-center border border-gray-200 shadow-sm">
+            <p className="text-gray-600 mb-4">Geen projecten gevonden</p>
+            <Button onClick={() => setShowForm(true)} className="bg-emerald-500 hover:bg-emerald-600">
+              Maak je eerste project
+            </Button>
+          </div>
+        ) : (
+          <div className={viewMode === 'grid' 
+            ? "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4"
+            : "space-y-3"
+          }>
+            {filteredProjects.map(project => (
+              <ProjectCard 
+                key={project.id} 
+                project={project} 
+                business={businessMap[project.business_id]} 
+              />
+            ))}
+          </div>
+        )}
+      </div>
 
       {/* New Project Dialog */}
       <Dialog open={showForm} onOpenChange={setShowForm}>
-        <DialogContent className="bg-[#22262b] border-gray-700 text-white max-w-lg max-h-[90vh] overflow-y-auto">
+        <DialogContent className="bg-white border-gray-200 max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="text-xl font-semibold">Nieuw Project</DialogTitle>
+            <DialogTitle className="text-xl font-semibold text-gray-900">Nieuw Project</DialogTitle>
           </DialogHeader>
           
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-2">
-              <Label>Project Titel *</Label>
+              <Label className="text-gray-700">Project Titel *</Label>
               <Input
                 value={formData.title}
                 onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
-                className="bg-[#1a1d21] border-gray-700"
+                className="bg-white border-gray-300"
                 placeholder="Bijv. Instagram Campagne Q1"
                 required
               />
             </div>
 
             <div className="space-y-2">
-              <Label>Business *</Label>
+              <Label className="text-gray-700">Business *</Label>
               <Select 
                 value={formData.business_id} 
                 onValueChange={(v) => setFormData(prev => ({ ...prev, business_id: v }))}
                 required
               >
-                <SelectTrigger className="bg-[#1a1d21] border-gray-700">
+                <SelectTrigger className="bg-white border-gray-300">
                   <SelectValue placeholder="Selecteer business" />
                 </SelectTrigger>
                 <SelectContent>
@@ -244,7 +246,7 @@ export default function Projects() {
             </div>
 
             <div className="space-y-2">
-              <Label>Platforms</Label>
+              <Label className="text-gray-700">Platforms</Label>
               <div className="grid grid-cols-2 gap-2">
                 {PLATFORMS.map(platform => (
                   <div key={platform} className="flex items-center space-x-2">
@@ -253,7 +255,7 @@ export default function Projects() {
                       checked={formData.platforms.includes(platform)}
                       onCheckedChange={() => togglePlatform(platform)}
                     />
-                    <label htmlFor={platform} className="text-sm text-gray-300">{platform}</label>
+                    <label htmlFor={platform} className="text-sm text-gray-700">{platform}</label>
                   </div>
                 ))}
               </div>
@@ -261,12 +263,12 @@ export default function Projects() {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Content Type</Label>
+                <Label className="text-gray-700">Content Type</Label>
                 <Select 
                   value={formData.content_type} 
                   onValueChange={(v) => setFormData(prev => ({ ...prev, content_type: v }))}
                 >
-                  <SelectTrigger className="bg-[#1a1d21] border-gray-700">
+                  <SelectTrigger className="bg-white border-gray-300">
                     <SelectValue placeholder="Selecteer" />
                   </SelectTrigger>
                   <SelectContent>
@@ -278,12 +280,12 @@ export default function Projects() {
               </div>
 
               <div className="space-y-2">
-                <Label>Prioriteit</Label>
+                <Label className="text-gray-700">Prioriteit</Label>
                 <Select 
                   value={formData.priority} 
                   onValueChange={(v) => setFormData(prev => ({ ...prev, priority: v }))}
                 >
-                  <SelectTrigger className="bg-[#1a1d21] border-gray-700">
+                  <SelectTrigger className="bg-white border-gray-300">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -296,27 +298,27 @@ export default function Projects() {
             </div>
 
             <div className="space-y-2">
-              <Label>Deadline</Label>
+              <Label className="text-gray-700">Deadline</Label>
               <Input
                 type="date"
                 value={formData.due_date}
                 onChange={(e) => setFormData(prev => ({ ...prev, due_date: e.target.value }))}
-                className="bg-[#1a1d21] border-gray-700"
+                className="bg-white border-gray-300"
               />
             </div>
 
             <div className="space-y-2">
-              <Label>Beschrijving</Label>
+              <Label className="text-gray-700">Beschrijving</Label>
               <Textarea
                 value={formData.description}
                 onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                className="bg-[#1a1d21] border-gray-700 min-h-[80px]"
+                className="bg-white border-gray-300 min-h-[80px]"
                 placeholder="Project details..."
               />
             </div>
 
             <div className="flex justify-end gap-3 pt-4">
-              <Button type="button" variant="outline" onClick={() => setShowForm(false)} className="border-gray-600 text-gray-300">
+              <Button type="button" variant="outline" onClick={() => setShowForm(false)} className="border-gray-300 text-gray-700">
                 Annuleren
               </Button>
               <Button type="submit" className="bg-emerald-500 hover:bg-emerald-600" disabled={createMutation.isPending}>
