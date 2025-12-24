@@ -53,6 +53,9 @@ import SignUp from "./SignUp";
 
 import ForgotPassword from "./ForgotPassword";
 
+import ProfileSetup from "../components/auth/ProfileSetup";
+import ProfileGuard from "../components/auth/ProfileGuard";
+
 import ShortFilmTemplate from "./ShortFilmTemplate";
 
 import MusicVideoTemplate from "./MusicVideoTemplate";
@@ -164,48 +167,60 @@ function PagesContent() {
             <Route path="/signup" element={<SignUp />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/forgotpassword" element={<ForgotPassword />} />
+            <Route path="/profile-setup" element={<ProfileSetup />} />
 
-            {/* NEW v2.0 Routes with AppLayout (Horizontal Navbar) */}
+            {/* NEW v2.0 Routes with AppLayout (Horizontal Navbar) - Protected by ProfileGuard */}
             <Route path="/templates" element={
-                <AppLayout>
-                    <Templates />
-                </AppLayout>
+                <ProfileGuard>
+                    <AppLayout>
+                        <Templates />
+                    </AppLayout>
+                </ProfileGuard>
             } />
             <Route path="/dashboard" element={
-                <AppLayout>
-                    <Dashboard />
-                </AppLayout>
+                <ProfileGuard>
+                    <AppLayout>
+                        <Dashboard />
+                    </AppLayout>
+                </ProfileGuard>
             } />
             <Route path="/projects" element={
-                <AppLayout>
-                    <Projects />
-                </AppLayout>
+                <ProfileGuard>
+                    <AppLayout>
+                        <Projects />
+                    </AppLayout>
+                </ProfileGuard>
             } />
-            <Route path="/project/:id" element={<ProjectLayout />} />
+            <Route path="/project/:id" element={
+                <ProfileGuard>
+                    <ProjectLayout />
+                </ProfileGuard>
+            } />
             
-            {/* Template pages without Layout (they have their own full-screen layout) */}
-            <Route path="/ShortFilmTemplate" element={<ShortFilmTemplate />} />
-            <Route path="/templates/short-film" element={<ShortFilmTemplate />} />
-            <Route path="/MusicVideoTemplate" element={<MusicVideoTemplate />} />
-            <Route path="/templates/music-video" element={<MusicVideoTemplate />} />
-            <Route path="/CommercialProductionTemplate" element={<CommercialProductionTemplate />} />
-            <Route path="/templates/commercial" element={<CommercialProductionTemplate />} />
-            <Route path="/PodcastProductionTemplate" element={<PodcastProductionTemplate />} />
-            <Route path="/templates/podcast" element={<PodcastProductionTemplate />} />
-            <Route path="/BlankCanvasTemplate" element={<BlankCanvasTemplate />} />
-            <Route path="/templates/blank" element={<BlankCanvasTemplate />} />
-            <Route path="/PhotoshootProductionTemplate" element={<PhotoshootProductionTemplate />} />
-            <Route path="/templates/photoshoot" element={<PhotoshootProductionTemplate />} />
-            <Route path="/DocumentaryTemplate" element={<DocumentaryTemplate />} />
-            <Route path="/templates/documentary" element={<DocumentaryTemplate />} />
+            {/* Template pages without Layout (they have their own full-screen layout) - Protected by ProfileGuard */}
+            <Route path="/ShortFilmTemplate" element={<ProfileGuard><ShortFilmTemplate /></ProfileGuard>} />
+            <Route path="/templates/short-film" element={<ProfileGuard><ShortFilmTemplate /></ProfileGuard>} />
+            <Route path="/MusicVideoTemplate" element={<ProfileGuard><MusicVideoTemplate /></ProfileGuard>} />
+            <Route path="/templates/music-video" element={<ProfileGuard><MusicVideoTemplate /></ProfileGuard>} />
+            <Route path="/CommercialProductionTemplate" element={<ProfileGuard><CommercialProductionTemplate /></ProfileGuard>} />
+            <Route path="/templates/commercial" element={<ProfileGuard><CommercialProductionTemplate /></ProfileGuard>} />
+            <Route path="/PodcastProductionTemplate" element={<ProfileGuard><PodcastProductionTemplate /></ProfileGuard>} />
+            <Route path="/templates/podcast" element={<ProfileGuard><PodcastProductionTemplate /></ProfileGuard>} />
+            <Route path="/BlankCanvasTemplate" element={<ProfileGuard><BlankCanvasTemplate /></ProfileGuard>} />
+            <Route path="/templates/blank" element={<ProfileGuard><BlankCanvasTemplate /></ProfileGuard>} />
+            <Route path="/PhotoshootProductionTemplate" element={<ProfileGuard><PhotoshootProductionTemplate /></ProfileGuard>} />
+            <Route path="/templates/photoshoot" element={<ProfileGuard><PhotoshootProductionTemplate /></ProfileGuard>} />
+            <Route path="/DocumentaryTemplate" element={<ProfileGuard><DocumentaryTemplate /></ProfileGuard>} />
+            <Route path="/templates/documentary" element={<ProfileGuard><DocumentaryTemplate /></ProfileGuard>} />
             
-            {/* OLD Routes with Legacy Layout (backwards compatible) */}
+            {/* OLD Routes with Legacy Layout (backwards compatible) - Protected by ProfileGuard */}
             <Route path="*" element={
-                <Layout currentPageName={currentPage}>
-                    <Routes>
-                        <Route path="/" element={<Dashboard />} />
-                        <Route path="/Dashboard" element={<Dashboard />} />
-                        <Route path="/Projects" element={<Projects />} />
+                <ProfileGuard>
+                    <Layout currentPageName={currentPage}>
+                        <Routes>
+                            <Route path="/" element={<Dashboard />} />
+                            <Route path="/Dashboard" element={<Dashboard />} />
+                            <Route path="/Projects" element={<Projects />} />
                         <Route path="/Businesses" element={<Businesses />} />
                         <Route path="/Crew" element={<Crew />} />
                         <Route path="/Schedule" element={<Schedule />} />
@@ -227,8 +242,9 @@ function PagesContent() {
                         <Route path="/settings/team" element={<TeamMembers />} />
                         <Route path="/Equipment" element={<Equipment />} />
                         <Route path="/ProductionPlanning/Equipment" element={<Equipment />} />
-                    </Routes>
-                </Layout>
+                        </Routes>
+                    </Layout>
+                </ProfileGuard>
             } />
         </Routes>
     );
