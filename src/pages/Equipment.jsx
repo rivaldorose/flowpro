@@ -1,5 +1,8 @@
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useQuery } from '@tanstack/react-query'
+import { EquipmentItem, EquipmentCategory } from '@/api/entities'
+import { supabase } from '@/lib/supabase'
 import { 
   ArrowLeft, 
   Search, 
@@ -23,7 +26,8 @@ import {
   AlertTriangle, 
   Copy, 
   X, 
-  Library
+  Library,
+  Loader2
 } from 'lucide-react'
 
 export default function Equipment() {
@@ -32,11 +36,61 @@ export default function Equipment() {
   const [viewMode, setViewMode] = useState('checklist')
   const [addModalOpen, setAddModalOpen] = useState(false)
   const [detailModalOpen, setDetailModalOpen] = useState(false)
-  const [expandedCategories, setExpandedCategories] = useState({
-    camera: true,
-    lighting: false,
-    audio: false
+  const [expandedCategories, setExpandedCategories] = useState({})
+
+  // Fetch equipment categories
+  const { data: categories = [] } = useQuery({
+    queryKey: ['equipmentCategories'],
+    queryFn: () => EquipmentCategory.list(),
   })
+
+  // Fetch equipment items
+  const { data: equipmentItems = [], isLoading: loadingEquipment } = useQuery({
+    queryKey: ['equipmentItems'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('equipment_items')
+        .select(`
+          *,
+          equipment_categories:category_id (
+            id,
+            name,
+            icon,
+            color
+          )
+        `)
+        .order('created_at', { ascending: false })
+      
+      if (error) throw error
+      return data || []
+    },
+  })
+
+  // Calculate summary statistics
+  const stats = useMemo(() => {
+    const total = equipmentItems.length
+    const owned = equipmentItems.filter(item => item.source_type === 'owned').length
+    const rented = equipmentItems.filter(item => item.source_type === 'rented')
+    const rentedCount = rented.length
+    const rentedCost = rented.reduce((sum, item) => sum + (parseFloat(item.total_cost || 0)), 0)
+    const needed = equipmentItems.filter(item => item.source_type === 'needed').length
+    
+    return { total, owned, rentedCount, rentedCost, needed }
+  }, [equipmentItems])
+
+  // Initialize expanded categories based on fetched categories
+  React.useEffect(() => {
+    if (categories.length > 0 && Object.keys(expandedCategories).length === 0) {
+      const initialExpanded = {}
+      categories.forEach(cat => {
+        initialExpanded[cat.id] = false
+      })
+      if (categories.length > 0) {
+        initialExpanded[categories[0].id] = true
+      }
+      setExpandedCategories(initialExpanded)
+    }
+  }, [categories])
 
   const toggleCategory = (category) => {
     setExpandedCategories(prev => ({
@@ -70,7 +124,9 @@ export default function Equipment() {
             <span className="text-[10px] font-semibold text-[#6B7280] uppercase tracking-wider">Production Planning</span>
             <div className="flex items-center gap-3">
               <h1 className="text-xl font-bold text-[#1F2937] tracking-tight leading-none mt-0.5">Equipment</h1>
-              <span className="px-2 py-0.5 rounded-full bg-gray-100 text-[#6B7280] border border-[#E5E7EB] text-[10px] font-mono font-medium">32 items</span>
+              <span className="px-2 py-0.5 rounded-full bg-gray-100 text-[#6B7280] border border-[#E5E7EB] text-[10px] font-mono font-medium">
+                {stats.total} {stats.total === 1 ? 'item' : 'items'}
+              </span>
             </div>
           </div>
         </div>
@@ -152,7 +208,9 @@ export default function Equipment() {
                 <Package className="w-4 h-4" />
                 <span className="text-xs font-semibold uppercase tracking-wider">Total Items</span>
               </div>
-              <span className="text-2xl font-bold text-[#1F2937] tracking-tight group-hover:text-[#6B46C1] transition-colors">32</span>
+              <span className="text-2xl font-bold text-[#1F2937] tracking-tight group-hover:text-[#6B46C1] transition-colors">
+                {loadingEquipment ? '...' : stats.total}
+              </span>
               <span className="text-xs text-[#6B7280] mt-1">All categories</span>
             </button>
 
@@ -162,7 +220,9 @@ export default function Equipment() {
                 <CheckCircle2 className="w-4 h-4 text-[#10B981]" />
                 <span className="text-xs font-semibold uppercase tracking-wider">Owned</span>
               </div>
-              <span className="text-2xl font-bold text-[#10B981] tracking-tight">18</span>
+              <span className="text-2xl font-bold text-[#10B981] tracking-tight">
+                {loadingEquipment ? '...' : stats.owned}
+              </span>
               <span className="text-xs text-[#6B7280] mt-1">From inventory</span>
             </button>
 
@@ -173,8 +233,14 @@ export default function Equipment() {
                 <span className="text-xs font-semibold uppercase tracking-wider">Rented</span>
               </div>
               <div className="flex items-baseline gap-2">
-                <span className="text-2xl font-bold text-[#3B82F6] tracking-tight">12</span>
-                <span className="text-sm font-mono text-[#6B7280] bg-gray-100 px-1.5 rounded">$3,450</span>
+                <span className="text-2xl font-bold text-[#3B82F6] tracking-tight">
+                  {loadingEquipment ? '...' : stats.rentedCount}
+                </span>
+                {stats.rentedCost > 0 && (
+                  <span className="text-sm font-mono text-[#6B7280] bg-gray-100 px-1.5 rounded">
+                    ${stats.rentedCost.toLocaleString()}
+                  </span>
+                )}
               </div>
               <span className="text-xs text-[#6B7280] mt-1">Total rental cost</span>
             </button>
@@ -185,7 +251,9 @@ export default function Equipment() {
                 <AlertCircle className="w-4 h-4 text-[#EF4444]" />
                 <span className="text-xs font-semibold uppercase tracking-wider">Still Needed</span>
               </div>
-              <span className="text-2xl font-bold text-[#EF4444] tracking-tight">2</span>
+              <span className="text-2xl font-bold text-[#EF4444] tracking-tight">
+                {loadingEquipment ? '...' : stats.needed}
+              </span>
               <span className="text-xs text-[#6B7280] mt-1">Not yet sourced</span>
             </button>
           </div>
