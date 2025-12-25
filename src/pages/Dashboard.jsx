@@ -62,9 +62,11 @@ export default function Dashboard() {
     template: 'blank',
   });
 
-  const { data: projects = [], isLoading: projectsLoading } = useQuery({
+  const { data: projects = [], isLoading: projectsLoading, refetch: refetchProjects } = useQuery({
     queryKey: ['projects'],
     queryFn: () => Project.list('-created_date'),
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
   });
 
   const { data: businesses = [] } = useQuery({

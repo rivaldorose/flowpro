@@ -49,7 +49,9 @@ export default function CreateProjectFromTemplate({
       return project;
     },
     onSuccess: (project) => {
+      // Invalidate and refetch projects immediately
       queryClient.invalidateQueries({ queryKey: ['projects'] });
+      queryClient.refetchQueries({ queryKey: ['projects'] });
       queryClient.invalidateQueries({ queryKey: ['canvasItems', project.id] });
       onOpenChange(false);
       // Navigate to the new project
