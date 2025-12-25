@@ -1,51 +1,12 @@
-import Layout from "./Layout.jsx";
 import AppLayout from "../components/layout/AppLayout";
 
 import Dashboard from "./Dashboard";
-
-import Projects from "./Projects";
 
 import Templates from "./Templates";
 
 import ProjectLayout from "./project/ProjectLayout";
 
-
-import Crew from "./Crew";
-
-import Schedule from "./Schedule";
-
-import Scripts from "./Scripts";
-
-import Budget from "./Budget";
-
-import ProjectDetail from "./ProjectDetail";
-
-import ScriptDetail from "./ScriptDetail";
-
-import Shots from "./Shots";
-
-import PostProduction from "./PostProduction";
-
-import Locations from "./Locations";
-
-import Team from "./Team";
-
-import Profile from "./Profile";
 import Settings from "./Settings";
-
-import Tasks from "./Tasks";
-
-import Podcasts from "./Podcasts";
-
-import PodcastDetail from "./PodcastDetail";
-
-import Storyboard from "./Storyboard";
-
-import ProductionPlanning from "./ProductionPlanning";
-
-import TeamMembers from "./TeamMembers";
-
-import Equipment from "./Equipment";
 
 import SignIn from "./SignIn";
 
@@ -73,91 +34,22 @@ import DocumentaryTemplate from "./DocumentaryTemplate";
 import { BrowserRouter as Router, Route, Routes, useLocation, Navigate } from 'react-router-dom';
 
 const PAGES = {
-    
     Dashboard: Dashboard,
-    
-    Projects: Projects,
-    
-    
-    Crew: Crew,
-    
-    Schedule: Schedule,
-    
-    Scripts: Scripts,
-    
-    Budget: Budget,
-    
-    ProjectDetail: ProjectDetail,
-    
-    ScriptDetail: ScriptDetail,
-    
-    Shots: Shots,
-    
-    PostProduction: PostProduction,
-    
-    Locations: Locations,
-    
-    Team: Team,
-    
-    Profile: Profile,
-    
-    Tasks: Tasks,
-    
-    Podcasts: Podcasts,
-    
-    PodcastDetail: PodcastDetail,
-    
-    Storyboard: Storyboard,
-    
-    ProductionPlanning: ProductionPlanning,
-    
-    TeamMembers: TeamMembers,
-    
-    Equipment: Equipment,
-    
-    SignIn: SignIn,
-    
-    SignUp: SignUp,
-    
-    ForgotPassword: ForgotPassword,
-    
-    ShortFilmTemplate: ShortFilmTemplate,
-    
-    MusicVideoTemplate: MusicVideoTemplate,
-    
-    CommercialProductionTemplate: CommercialProductionTemplate,
-    
-    PodcastProductionTemplate: PodcastProductionTemplate,
-    
-    BlankCanvasTemplate: BlankCanvasTemplate,
-    
-    PhotoshootProductionTemplate: PhotoshootProductionTemplate,
-    
-    DocumentaryTemplate: DocumentaryTemplate,
-    
     Templates: Templates,
-    
-}
-
-function _getCurrentPage(url) {
-    if (url.endsWith('/')) {
-        url = url.slice(0, -1);
-    }
-    let urlLastPart = url.split('/').pop();
-    if (urlLastPart.includes('?')) {
-        urlLastPart = urlLastPart.split('?')[0];
-    }
-
-    const pageName = Object.keys(PAGES).find(page => page.toLowerCase() === urlLastPart.toLowerCase());
-    return pageName || Object.keys(PAGES)[0];
+    SignIn: SignIn,
+    SignUp: SignUp,
+    ForgotPassword: ForgotPassword,
+    ShortFilmTemplate: ShortFilmTemplate,
+    MusicVideoTemplate: MusicVideoTemplate,
+    CommercialProductionTemplate: CommercialProductionTemplate,
+    PodcastProductionTemplate: PodcastProductionTemplate,
+    BlankCanvasTemplate: BlankCanvasTemplate,
+    PhotoshootProductionTemplate: PhotoshootProductionTemplate,
+    DocumentaryTemplate: DocumentaryTemplate,
 }
 
 // Create a wrapper component that uses useLocation inside the Router context
 function PagesContent() {
-    const location = useLocation();
-    const currentPage = _getCurrentPage(location.pathname);
-    const isAuthPage = location.pathname === '/signin' || location.pathname === '/login' || location.pathname === '/signup' || location.pathname === '/forgot-password' || location.pathname === '/forgotpassword';
-    
     return (
         <Routes>
             {/* Auth pages without Layout */}
@@ -169,6 +61,11 @@ function PagesContent() {
             <Route path="/profile-setup" element={<ProfileSetup />} />
 
             {/* NEW v2.0 Routes with AppLayout (Horizontal Navbar) - Protected by ProfileGuard */}
+            <Route path="/" element={
+                <ProfileGuard>
+                    <Navigate to="/dashboard" replace />
+                </ProfileGuard>
+            } />
             <Route path="/templates" element={
                 <ProfileGuard>
                     <AppLayout>
@@ -233,38 +130,49 @@ function PagesContent() {
                     </AppLayout>
                 </ProfileGuard>
             } />
+            <Route path="/settings/organizations" element={
+                <ProfileGuard>
+                    <AppLayout>
+                        <Settings />
+                    </AppLayout>
+                </ProfileGuard>
+            } />
+            <Route path="/settings/contacts" element={
+                <ProfileGuard>
+                    <AppLayout>
+                        <Settings />
+                    </AppLayout>
+                </ProfileGuard>
+            } />
             
-            {/* OLD Routes with Legacy Layout (backwards compatible) - Protected by ProfileGuard */}
+            {/* Redirect all old routes to dashboard */}
+            <Route path="/Dashboard" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/Projects" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/Businesses" element={<Navigate to="/settings/organizations" replace />} />
+            <Route path="/Crew" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/Schedule" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/Scripts" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/Budget" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/ProjectDetail" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/ScriptDetail" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/Shots" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/PostProduction" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/Locations" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/Team" element={<Navigate to="/settings/team" replace />} />
+            <Route path="/Profile" element={<Navigate to="/settings" replace />} />
+            <Route path="/Tasks" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/Podcasts" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/PodcastDetail" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/Storyboard" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/ProductionPlanning" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/TeamMembers" element={<Navigate to="/settings/team" replace />} />
+            <Route path="/Equipment" element={<Navigate to="/settings/equipment" replace />} />
+            <Route path="/ProductionPlanning/Equipment" element={<Navigate to="/settings/equipment" replace />} />
+            
+            {/* Catch all - redirect to dashboard */}
             <Route path="*" element={
                 <ProfileGuard>
-                    <Layout currentPageName={currentPage}>
-                        <Routes>
-                            <Route path="/" element={<Dashboard />} />
-                            <Route path="/Dashboard" element={<Dashboard />} />
-                            <Route path="/Projects" element={<Projects />} />
-                        <Route path="/Businesses" element={<Navigate to="/settings/organizations" replace />} />
-                        <Route path="/Crew" element={<Crew />} />
-                        <Route path="/Schedule" element={<Schedule />} />
-                        <Route path="/Scripts" element={<Scripts />} />
-                        <Route path="/Budget" element={<Budget />} />
-                        <Route path="/ProjectDetail" element={<ProjectDetail />} />
-                        <Route path="/ScriptDetail" element={<ScriptDetail />} />
-                        <Route path="/Shots" element={<Shots />} />
-                        <Route path="/PostProduction" element={<PostProduction />} />
-                        <Route path="/Locations" element={<Locations />} />
-                        <Route path="/Team" element={<Team />} />
-                        <Route path="/Profile" element={<Profile />} />
-                        <Route path="/Tasks" element={<Tasks />} />
-                        <Route path="/Podcasts" element={<Podcasts />} />
-                        <Route path="/PodcastDetail" element={<PodcastDetail />} />
-                        <Route path="/Storyboard" element={<Storyboard />} />
-                        <Route path="/ProductionPlanning" element={<ProductionPlanning />} />
-                        <Route path="/TeamMembers" element={<TeamMembers />} />
-                        <Route path="/settings/team" element={<TeamMembers />} />
-                        <Route path="/Equipment" element={<Equipment />} />
-                        <Route path="/ProductionPlanning/Equipment" element={<Equipment />} />
-                        </Routes>
-                    </Layout>
+                    <Navigate to="/dashboard" replace />
                 </ProfileGuard>
             } />
         </Routes>
