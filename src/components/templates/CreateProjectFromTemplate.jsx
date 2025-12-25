@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Project, Business } from '@/api/entities';
 import { initializeTemplate } from '@/lib/templateInitializers';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useQuery } from '@tanstack/react-query';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Plus } from 'lucide-react';
 
 /**
  * Modal to create a new project from a template
@@ -116,9 +116,22 @@ export default function CreateProjectFromTemplate({
               </SelectContent>
             </Select>
             {businesses.length === 0 && (
-              <p className="text-sm text-gray-500">
-                No businesses found. Please create a business first.
-              </p>
+              <div className="space-y-2">
+                <p className="text-sm text-gray-500">
+                  No businesses found. Please create a business first.
+                </p>
+                <Link to="/businesses">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="w-full"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Create Business
+                  </Button>
+                </Link>
+              </div>
             )}
           </div>
 
@@ -143,7 +156,7 @@ export default function CreateProjectFromTemplate({
             </Button>
             <Button
               type="submit"
-              disabled={!projectName || !selectedBusinessId || createMutation.isPending}
+              disabled={!projectName || (businesses.length > 0 && !selectedBusinessId) || createMutation.isPending}
               className="bg-purple-600 hover:bg-purple-700"
             >
               {createMutation.isPending && (
