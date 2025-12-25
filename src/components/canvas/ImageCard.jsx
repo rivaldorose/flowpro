@@ -10,16 +10,25 @@ export default function ImageCard({ id, x, y, width = 400, src, alt = '', onUpda
   const [imageSrc, setImageSrc] = useState(src);
   const [isUploading, setIsUploading] = useState(false);
 
+  // Update local state when src prop changes
+  React.useEffect(() => {
+    if (src) {
+      setImageSrc(src);
+    }
+  }, [src]);
+
   const handleImageUpload = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     setIsUploading(true);
+    // Pass file to parent for proper upload handling
+    onUpdate?.({ id, file });
+    
+    // Also show preview immediately
     const reader = new FileReader();
     reader.onloadend = () => {
-      const result = reader.result;
-      setImageSrc(result);
-      onUpdate?.({ id, src: result });
+      setImageSrc(reader.result);
       setIsUploading(false);
     };
     reader.readAsDataURL(file);

@@ -22,6 +22,9 @@ export default function BaseCard({
   children, 
   onDelete,
   onUpdate,
+  onMouseDown,
+  onMouseMove,
+  onMouseUp,
   className = '',
   ...props 
 }) {
@@ -29,7 +32,7 @@ export default function BaseCard({
   const [isHovered, setIsHovered] = useState(false);
 
   const handleDelete = () => {
-    if (onDelete && window.confirm('Delete this card?')) {
+    if (onDelete) {
       onDelete(id);
     }
   };
@@ -52,12 +55,15 @@ export default function BaseCard({
       }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      onMouseDown={onMouseDown}
+      onMouseMove={onMouseMove}
+      onMouseUp={onMouseUp}
       {...props}
     >
       {/* Card Header */}
-      <div className="flex items-center justify-between p-2 border-b border-gray-100 bg-gray-50/50 rounded-t-xl">
-        <div className="flex items-center gap-1 text-gray-400 group-hover:text-gray-600">
-          <GripVertical className="w-4 h-4 cursor-grab active:cursor-grabbing" />
+      <div className="flex items-center justify-between p-2 border-b border-gray-100 bg-gray-50/50 rounded-t-xl card-header">
+        <div className="flex items-center gap-1 text-gray-400 group-hover:text-gray-600 grip-handle cursor-grab active:cursor-grabbing">
+          <GripVertical className="w-4 h-4" />
         </div>
         <div className="flex items-center gap-1">
           <DropdownMenu>
