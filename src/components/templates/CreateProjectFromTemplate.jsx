@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { Project, Business } from '@/api/entities';
+import { initializeTemplate } from '@/lib/templateInitializers';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -35,13 +36,21 @@ export default function CreateProjectFromTemplate({
       // Create the project
       const project = await Project.create(data);
       
-      // TODO: Initialize template-specific data here if needed
-      // For example, create initial canvas items, scripts, etc. based on template
+      // Initialize template-specific data (canvas items, etc.)
+      if (templateId) {
+        try {
+          await initializeTemplate(templateId, project.id);
+        } catch (error) {
+          console.error('Failed to initialize template data:', error);
+          // Don't fail the project creation if template init fails
+        }
+      }
       
       return project;
     },
     onSuccess: (project) => {
       queryClient.invalidateQueries({ queryKey: ['projects'] });
+      queryClient.invalidateQueries({ queryKey: ['canvasItems', project.id] });
       onOpenChange(false);
       // Navigate to the new project
       navigate(`/project/${project.id}?mode=canvas`);
