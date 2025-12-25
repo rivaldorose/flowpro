@@ -566,6 +566,81 @@ export default function Dashboard() {
           </div>
         </div>
       )}
+
+      {/* Template Selection Modal */}
+      {showNewProjectModal && showTemplateSelection && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-gray-900/40 backdrop-blur-sm overflow-y-auto py-8"
+          onClick={() => {
+            setShowTemplateSelection(false);
+            setShowNewProjectModal(false);
+          }}
+        >
+          <div 
+            className="relative w-full max-w-6xl bg-white rounded-2xl shadow-2xl p-8 transform transition-all my-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="font-serif text-2xl font-semibold text-gray-900 mb-2">Choose a Template</h2>
+                <p className="text-gray-600">Select a template to start your project</p>
+              </div>
+              <button 
+                onClick={() => {
+                  setShowTemplateSelection(false);
+                  setShowNewProjectModal(false);
+                }}
+                className="cursor-pointer text-gray-400 hover:text-gray-900 p-1 rounded-md hover:bg-gray-100 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            {/* Templates Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-[70vh] overflow-y-auto pr-2">
+              {[
+                { id: 'short-film', name: 'Short Film', icon: Film, gradient: 'from-purple-500 to-pink-500', description: 'Complete workflow for short film production' },
+                { id: 'music-video', name: 'Music Video', icon: Music, gradient: 'from-orange-500 to-red-500', description: 'Plan and execute music video productions' },
+                { id: 'commercial', name: 'Commercial Production', icon: Megaphone, gradient: 'from-blue-500 to-indigo-500', description: 'Professional commercial production workflow' },
+                { id: 'podcast', name: 'Podcast Production', icon: Mic, gradient: 'from-teal-500 to-emerald-500', description: 'Organize episodes and manage guests' },
+                { id: 'photoshoot', name: 'Photoshoot Production', icon: Camera, gradient: 'from-pink-500 to-rose-500', description: 'Plan creative concepts and shot lists' },
+                { id: 'documentary', name: 'Documentary', icon: FileSearch, gradient: 'from-cyan-500 to-blue-500', description: 'Investigation workspace for research' },
+                { id: 'blank', name: 'Blank Canvas', icon: FileText, gradient: 'from-gray-500 to-slate-500', description: 'Start from scratch with a customizable workspace' },
+              ].map((template) => {
+                const Icon = template.icon;
+                return (
+                  <button
+                    key={template.id}
+                    onClick={() => {
+                      setShowTemplateSelection(false);
+                      setShowNewProjectModal(false);
+                      navigate(`/templates/${template.id}`);
+                    }}
+                    className="group p-5 border-2 border-gray-200 rounded-xl hover:border-purple-500 hover:shadow-lg transition-all text-left"
+                  >
+                    <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${template.gradient} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
+                      <Icon className="w-6 h-6 text-white" />
+                    </div>
+                    <h3 className="font-semibold text-gray-900 mb-2">{template.name}</h3>
+                    <p className="text-sm text-gray-500">{template.description}</p>
+                  </button>
+                );
+              })}
+            </div>
+            
+            <div className="flex justify-end gap-3 pt-6 mt-6 border-t border-gray-100">
+              <button
+                onClick={() => {
+                  setShowTemplateSelection(false);
+                }}
+                className="px-5 py-2.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors"
+              >
+                Back
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
