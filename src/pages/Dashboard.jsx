@@ -5,7 +5,8 @@ import { Project, Business, User } from '@/api/entities';
 import { 
   Clapperboard, Search, Bell, Plus, X, MoreHorizontal, Film, 
   Tv, Music, FileText, LayoutGrid, List, ChevronDown, 
-  CheckCircle2, Camera, Video, Megaphone, User as UserIcon, Settings, LogOut
+  CheckCircle2, Camera, Video, Megaphone, User as UserIcon, Settings, LogOut,
+  Layers, ArrowRight, FileSearch, Mic
 } from 'lucide-react';
 import { createPageUrl } from '../utils';
 import { format } from 'date-fns';
@@ -48,6 +49,7 @@ const getProjectType = (project) => {
 export default function Dashboard() {
   const navigate = useNavigate();
   const [showNewProjectModal, setShowNewProjectModal] = useState(false);
+  const [showTemplateSelection, setShowTemplateSelection] = useState(false);
   const [viewMode, setViewMode] = useState('grid');
   const [filterStatus, setFilterStatus] = useState('all');
   const [newProjectData, setNewProjectData] = useState({
