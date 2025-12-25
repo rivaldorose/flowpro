@@ -99,26 +99,25 @@ export default function ShortFilmTemplate() {
             </div>
           </div>
 
-        <div className="flex items-center gap-3">
-          <div className="flex -space-x-2">
-            <div className="w-8 h-8 rounded-full bg-orange-100 border-2 border-white flex items-center justify-center text-xs font-bold text-orange-600">
-              JD
+          <div className="flex items-center gap-3">
+            <div className="flex -space-x-2">
+              <div className="w-8 h-8 rounded-full bg-orange-100 border-2 border-white flex items-center justify-center text-xs font-bold text-orange-600">
+                JD
+              </div>
+              <div className="w-8 h-8 rounded-full bg-blue-100 border-2 border-white flex items-center justify-center text-xs font-bold text-blue-600">
+                AL
+              </div>
+              <div className="w-8 h-8 rounded-full bg-gray-100 border-2 border-white flex items-center justify-center text-xs text-gray-400">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24">
+                  <path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 12h14m-7-7v14"></path>
+                </svg>
+              </div>
             </div>
-            <div className="w-8 h-8 rounded-full bg-blue-100 border-2 border-white flex items-center justify-center text-xs font-bold text-blue-600">
-              AL
-            </div>
-            <div className="w-8 h-8 rounded-full bg-gray-100 border-2 border-white flex items-center justify-center text-xs text-gray-400">
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24">
-                <path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 12h14m-7-7v14"></path>
-              </svg>
-            </div>
+            <button className="px-3 py-1.5 bg-[#6B46C1] text-white text-sm font-medium rounded-md hover:bg-[#553C9A] transition-colors">
+              Share
+            </button>
           </div>
-          <button className="px-3 py-1.5 bg-[#6B46C1] text-white text-sm font-medium rounded-md hover:bg-[#553C9A] transition-colors">
-            Share
-          </button>
-        </div>
-      </header>
-    </AppLayout>
+        </header>
 
       {/* Toolbar */}
       <div className="absolute left-4 top-20 flex flex-col gap-2 bg-white p-1.5 rounded-lg shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1),0_10px_10px_-5px_rgba(0,0,0,0.04)] border border-[#E5E5E5] z-30">
