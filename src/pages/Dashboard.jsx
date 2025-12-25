@@ -646,6 +646,21 @@ export default function Dashboard() {
           </div>
         </div>
       )}
+
+      {/* Create Project From Template Modal */}
+      {selectedTemplate && (
+        <CreateProjectFromTemplate
+          templateId={selectedTemplate.id}
+          templateName={selectedTemplate.name}
+          open={showCreateModal}
+          onOpenChange={(open) => {
+            setShowCreateModal(open);
+            if (!open) {
+              setSelectedTemplate(null);
+            }
+          }}
+        />
+      )}
     </div>
   );
 }
