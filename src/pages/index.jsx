@@ -31,22 +31,7 @@ import PhotoshootProductionTemplate from "./PhotoshootProductionTemplate";
 
 import DocumentaryTemplate from "./DocumentaryTemplate";
 
-import { BrowserRouter as Router, Route, Routes, useLocation, Navigate } from 'react-router-dom';
-
-const PAGES = {
-    Dashboard: Dashboard,
-    Templates: Templates,
-    SignIn: SignIn,
-    SignUp: SignUp,
-    ForgotPassword: ForgotPassword,
-    ShortFilmTemplate: ShortFilmTemplate,
-    MusicVideoTemplate: MusicVideoTemplate,
-    CommercialProductionTemplate: CommercialProductionTemplate,
-    PodcastProductionTemplate: PodcastProductionTemplate,
-    BlankCanvasTemplate: BlankCanvasTemplate,
-    PhotoshootProductionTemplate: PhotoshootProductionTemplate,
-    DocumentaryTemplate: DocumentaryTemplate,
-}
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 
 // Create a wrapper component that uses useLocation inside the Router context
 function PagesContent() {
