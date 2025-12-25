@@ -98,9 +98,9 @@ export default function ProjectLayout() {
 
   return (
     <AppLayout>
-      <div className="flex flex-col h-[calc(100vh-3.5rem)]">
+      <div className="flex flex-col" style={{ minHeight: 'calc(100vh - 3.5rem)' }}>
         {/* Header */}
-        <div className="bg-white border-b border-gray-200">
+        <div className="bg-white border-b border-gray-200 sticky top-14 z-30">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
@@ -129,7 +129,7 @@ export default function ProjectLayout() {
         <ProjectTabs projectId={projectId} activeMode={mode} />
 
         {/* Mode Content */}
-        <div className="flex-1 overflow-auto bg-gray-50">
+        <div className="flex-1 overflow-auto bg-gray-50 min-h-0">
           {renderMode()}
         </div>
       </div>
