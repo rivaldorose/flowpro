@@ -71,7 +71,7 @@ import PhotoshootProductionTemplate from "./PhotoshootProductionTemplate";
 
 import DocumentaryTemplate from "./DocumentaryTemplate";
 
-import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, useLocation, Navigate } from 'react-router-dom';
 
 const PAGES = {
     
@@ -183,6 +183,12 @@ function PagesContent() {
                     <AppLayout>
                         <Dashboard />
                     </AppLayout>
+                </ProfileGuard>
+            } />
+            {/* Redirect /projects to /dashboard */}
+            <Route path="/projects" element={
+                <ProfileGuard>
+                    <Navigate to="/dashboard" replace />
                 </ProfileGuard>
             } />
             <Route path="/project/:id" element={
