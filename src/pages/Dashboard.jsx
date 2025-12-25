@@ -512,14 +512,14 @@ export default function Dashboard() {
               <div className="space-y-1.5">
                 <label className="text-sm font-semibold text-gray-900">Start with</label>
                 <div className="space-y-2">
-                  <label className="flex items-center gap-3 p-3 border border-gray-200 rounded-lg cursor-pointer hover:border-purple-600/50 transition-colors group">
-                    <input 
-                      type="radio" 
-                      name="template" 
-                      className="accent-purple-600 w-4 h-4" 
-                      checked={newProjectData.template === 'blank'}
-                      onChange={() => setNewProjectData({ ...newProjectData, template: 'blank' })}
-                    />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowNewProjectModal(false);
+                      navigate('/templates/blank');
+                    }}
+                    className="w-full flex items-center gap-3 p-3 border border-gray-200 rounded-lg cursor-pointer hover:border-purple-600/50 transition-colors group text-left"
+                  >
                     <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 group-hover:bg-purple-600/10 group-hover:text-purple-600">
                       <FileText className="w-4 h-4" />
                     </div>
@@ -527,23 +527,23 @@ export default function Dashboard() {
                       <p className="text-sm font-medium text-gray-900">Blank Project</p>
                       <p className="text-xs text-gray-500">Start from scratch</p>
                     </div>
-                  </label>
-                  <label className="flex items-center gap-3 p-3 border border-gray-200 rounded-lg cursor-pointer hover:border-purple-600/50 transition-colors group">
-                    <input 
-                      type="radio" 
-                      name="template" 
-                      className="accent-purple-600 w-4 h-4"
-                      checked={newProjectData.template === 'template'}
-                      onChange={() => setNewProjectData({ ...newProjectData, template: 'template' })}
-                    />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowTemplateSelection(true);
+                    }}
+                    className="w-full flex items-center gap-3 p-3 border border-gray-200 rounded-lg cursor-pointer hover:border-purple-600/50 transition-colors group text-left"
+                  >
                     <div className="w-8 h-8 rounded-full bg-orange-50 flex items-center justify-center text-orange-600 group-hover:bg-orange-600/10">
-                      <FileText className="w-4 h-4" />
+                      <Layers className="w-4 h-4" />
                     </div>
                     <div className="flex-1">
                       <p className="text-sm font-medium text-gray-900">Use a Template</p>
                       <p className="text-xs text-gray-500">Pre-production, Shot lists, etc.</p>
                     </div>
-                  </label>
+                    <ArrowRight className="w-4 h-4 text-gray-400 group-hover:text-purple-600" />
+                  </button>
                 </div>
               </div>
             </div>
