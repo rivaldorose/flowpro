@@ -46,10 +46,14 @@ const getProjectType = (project) => {
   return 'Other';
 };
 
+import CreateProjectFromTemplate from '@/components/templates/CreateProjectFromTemplate';
+
 export default function Dashboard() {
   const navigate = useNavigate();
   const [showNewProjectModal, setShowNewProjectModal] = useState(false);
   const [showTemplateSelection, setShowTemplateSelection] = useState(false);
+  const [selectedTemplate, setSelectedTemplate] = useState(null);
+  const [showCreateModal, setShowCreateModal] = useState(false);
   const [viewMode, setViewMode] = useState('grid');
   const [filterStatus, setFilterStatus] = useState('all');
   const [newProjectData, setNewProjectData] = useState({
@@ -614,7 +618,8 @@ export default function Dashboard() {
                     onClick={() => {
                       setShowTemplateSelection(false);
                       setShowNewProjectModal(false);
-                      navigate(`/templates/${template.id}`);
+                      setSelectedTemplate(template);
+                      setShowCreateModal(true);
                     }}
                     className="group p-5 border-2 border-gray-200 rounded-xl hover:border-purple-500 hover:shadow-lg transition-all text-left"
                   >
