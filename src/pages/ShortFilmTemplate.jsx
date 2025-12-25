@@ -1,6 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { ArrowLeft } from 'lucide-react';
+import AppLayout from '@/components/layout/AppLayout';
 
 export default function ShortFilmTemplate() {
+  const navigate = useNavigate();
   const [showWelcomeModal, setShowWelcomeModal] = useState(true);
   const canvasRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -71,25 +75,29 @@ export default function ShortFilmTemplate() {
   }, [isDragging, startPos, scrollPos]);
 
   return (
-    <div className="h-screen w-screen overflow-hidden bg-[#F5F5F4] text-[#1F2937] flex flex-col">
-      {/* Top Navigation Bar */}
-      <header className="h-14 bg-white border-b border-[#E5E5E5] flex items-center justify-between px-4 z-40 shrink-0">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 text-[#6B46C1]">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" className="text-[#6B46C1]">
-              <path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20.2 6L3 11l-.9-2.4c-.3-1.1.3-2.2 1.3-2.5l13.5-4c1.1-.3 2.2.3 2.5 1.3Zm-14-.7l3.1 3.9m3.1-5.8l3.1 4M3 11h18v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"></path>
-            </svg>
-            <span className="font-serif font-bold text-lg tracking-tight text-gray-900">Flow Pro</span>
+    <AppLayout>
+      <div className="h-[calc(100vh-3.5rem)] overflow-hidden bg-[#F5F5F4] text-[#1F2937] flex flex-col">
+        {/* Top Navigation Bar */}
+        <header className="h-14 bg-white border-b border-[#E5E5E5] flex items-center justify-between px-4 z-40 shrink-0">
+          <div className="flex items-center gap-4">
+            <Link to="/dashboard" className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
+              <ArrowLeft className="w-5 h-5" />
+            </Link>
+            <div className="flex items-center gap-2 text-[#6B46C1]">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" className="text-[#6B46C1]">
+                <path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20.2 6L3 11l-.9-2.4c-.3-1.1.3-2.2 1.3-2.5l13.5-4c1.1-.3 2.2.3 2.5 1.3Zm-14-.7l3.1 3.9m3.1-5.8l3.1 4M3 11h18v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"></path>
+              </svg>
+              <span className="font-serif font-bold text-lg tracking-tight text-gray-900">Flow Pro</span>
+            </div>
+            <div className="h-4 w-px bg-gray-200"></div>
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium text-gray-500">Templates /</span>
+              <span className="text-sm font-semibold text-gray-900">Short Film Template</span>
+              <span className="px-2 py-0.5 rounded-full bg-purple-50 text-[#6B46C1] text-[10px] font-bold tracking-wide uppercase border border-purple-100">
+                Preview
+              </span>
+            </div>
           </div>
-          <div className="h-4 w-px bg-gray-200"></div>
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-medium text-gray-500">Projects /</span>
-            <span className="text-sm font-semibold text-gray-900">The Last Train Home</span>
-            <span className="px-2 py-0.5 rounded-full bg-purple-50 text-[#6B46C1] text-[10px] font-bold tracking-wide uppercase border border-purple-100">
-              Short Film
-            </span>
-          </div>
-        </div>
 
         <div className="flex items-center gap-3">
           <div className="flex -space-x-2">
@@ -110,6 +118,7 @@ export default function ShortFilmTemplate() {
           </button>
         </div>
       </header>
+    </AppLayout>
 
       {/* Toolbar */}
       <div className="absolute left-4 top-20 flex flex-col gap-2 bg-white p-1.5 rounded-lg shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1),0_10px_10px_-5px_rgba(0,0,0,0.04)] border border-[#E5E5E5] z-30">
@@ -541,7 +550,8 @@ export default function ShortFilmTemplate() {
           </div>
         </div>
       )}
-    </div>
+      </div>
+    </AppLayout>
   );
 }
 
