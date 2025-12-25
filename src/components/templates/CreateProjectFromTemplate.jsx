@@ -100,14 +100,14 @@ export default function CreateProjectFromTemplate({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="business">Business *</Label>
+            <Label htmlFor="business">Organisatie *</Label>
             <Select
               value={selectedBusinessId}
               onValueChange={setSelectedBusinessId}
               required
             >
               <SelectTrigger id="business">
-                <SelectValue placeholder="Select a business" />
+                <SelectValue placeholder="Selecteer een organisatie" />
               </SelectTrigger>
               <SelectContent>
                 {businesses.map((business) => (
@@ -120,9 +120,9 @@ export default function CreateProjectFromTemplate({
             {businesses.length === 0 && (
               <div className="space-y-2">
                 <p className="text-sm text-gray-500">
-                  No businesses found. Please create a business first.
+                  Geen organisaties gevonden. Maak eerst een organisatie aan.
                 </p>
-                <Link to="/businesses">
+                <Link to="/settings/organizations">
                   <Button
                     type="button"
                     variant="outline"
@@ -130,7 +130,7 @@ export default function CreateProjectFromTemplate({
                     className="w-full"
                   >
                     <Plus className="w-4 h-4 mr-2" />
-                    Create Business
+                    Organisatie Aanmaken
                   </Button>
                 </Link>
               </div>

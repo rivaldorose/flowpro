@@ -106,6 +106,7 @@ export const ProjectTeamMember = new Entity('project_team_members')
 export const ProjectInvitation = new Entity('project_invitations')
 export const ActivityLog = new Entity('activity_log')
 export const CanvasItem = new Entity('canvas_items')
+export const Contact = new Entity('contacts')
 
 // Auth wrapper
 export const User = {

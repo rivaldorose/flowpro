@@ -4,11 +4,15 @@ import {
   User, 
   Users, 
   Package, 
+  Building2,
+  Contact,
   ChevronRight 
 } from 'lucide-react';
 import Profile from './Profile';
 import TeamMembers from './TeamMembers';
 import Equipment from './Equipment';
+import Organizations from './Organizations';
+import Contacts from './Contacts';
 
 const settingsSections = [
   {
@@ -18,6 +22,22 @@ const settingsSections = [
     icon: User,
     path: '/settings',
     component: Profile,
+  },
+  {
+    id: 'organizations',
+    title: 'Organisaties',
+    description: 'Beheer organisaties en bedrijven',
+    icon: Building2,
+    path: '/settings/organizations',
+    component: Organizations,
+  },
+  {
+    id: 'contacts',
+    title: 'Contacten',
+    description: 'Beheer contacten en koppel aan organisaties',
+    icon: Contact,
+    path: '/settings/contacts',
+    component: Contacts,
   },
   {
     id: 'team',
@@ -46,6 +66,12 @@ export default function Settings() {
     const path = location.pathname;
     if (path === '/settings' || path === '/settings/') {
       return 'profile';
+    }
+    if (path === '/settings/organizations') {
+      return 'organizations';
+    }
+    if (path === '/settings/contacts') {
+      return 'contacts';
     }
     if (path === '/settings/team') {
       return 'team';
