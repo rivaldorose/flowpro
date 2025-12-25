@@ -137,7 +137,7 @@ export default function Projects() {
                   <SelectValue placeholder="Business" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Alle Businesses</SelectItem>
+                  <SelectItem value="all">Alle Organisaties</SelectItem>
                   {businesses.map(b => (
                     <SelectItem key={b.id} value={b.id}>{b.name}</SelectItem>
                   ))}
@@ -228,14 +228,14 @@ export default function Projects() {
             </div>
 
             <div className="space-y-2">
-              <Label className="text-gray-700">Business *</Label>
+              <Label className="text-gray-700">Organisatie *</Label>
               <Select 
                 value={formData.business_id} 
                 onValueChange={(v) => setFormData(prev => ({ ...prev, business_id: v }))}
                 required
               >
                 <SelectTrigger className="bg-white border-gray-300">
-                  <SelectValue placeholder="Selecteer business" />
+                  <SelectValue placeholder="Selecteer organisatie" />
                 </SelectTrigger>
                 <SelectContent>
                   {businesses.map(b => (

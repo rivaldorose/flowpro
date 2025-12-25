@@ -213,7 +213,7 @@ export default function Podcasts() {
                 <SelectValue placeholder="Business" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Alle Businesses</SelectItem>
+                <SelectItem value="all">Alle Organisaties</SelectItem>
                 {businesses.map(b => (
                   <SelectItem key={b.id} value={b.id}>{b.name}</SelectItem>
                 ))}

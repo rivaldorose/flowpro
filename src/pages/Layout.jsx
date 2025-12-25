@@ -41,7 +41,7 @@ const navItems = [
   { name: 'Budget', icon: Euro, page: 'Budget' },
   { name: 'Crew', icon: Users, page: 'Crew' },
   { name: 'Planning', icon: Calendar, page: 'Schedule' },
-  { name: 'Businesses', icon: Briefcase, page: 'Businesses' },
+  { name: 'Organisaties', icon: Briefcase, page: 'Settings', subPage: 'organizations' },
   { name: 'Team', icon: Users, page: 'Team' },
 ];
 

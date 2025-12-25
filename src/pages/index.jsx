@@ -9,7 +9,6 @@ import Templates from "./Templates";
 
 import ProjectLayout from "./project/ProjectLayout";
 
-import Businesses from "./Businesses";
 
 import Crew from "./Crew";
 
@@ -79,7 +78,6 @@ const PAGES = {
     
     Projects: Projects,
     
-    Businesses: Businesses,
     
     Crew: Crew,
     
