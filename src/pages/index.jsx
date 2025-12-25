@@ -185,13 +185,6 @@ function PagesContent() {
                     </AppLayout>
                 </ProfileGuard>
             } />
-            <Route path="/projects" element={
-                <ProfileGuard>
-                    <AppLayout>
-                        <Projects />
-                    </AppLayout>
-                </ProfileGuard>
-            } />
             <Route path="/project/:id" element={
                 <ProfileGuard>
                     <ProjectLayout />

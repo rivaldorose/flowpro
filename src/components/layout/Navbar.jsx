@@ -39,7 +39,7 @@ export default function Navbar() {
   };
 
   const navItems = [
-    { path: '/projects', label: 'Projects', icon: FolderKanban },
+    { path: '/dashboard', label: 'Dashboard', icon: FolderKanban },
     { path: '/templates', label: 'Templates', icon: Layers },
   ];
 

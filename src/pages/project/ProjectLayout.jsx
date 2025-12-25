@@ -66,8 +66,8 @@ export default function ProjectLayout() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="text-center py-12">
             <p className="text-gray-400 mb-4">Project not found</p>
-            <Link to="/projects">
-              <Button variant="outline">Back to Projects</Button>
+            <Link to="/dashboard">
+              <Button variant="outline">Back to Dashboard</Button>
             </Link>
           </div>
         </div>
@@ -104,7 +104,7 @@ export default function ProjectLayout() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <Link to="/projects">
+                <Link to="/dashboard">
                   <Button variant="ghost" size="icon" className="text-gray-600 hover:text-gray-900">
                     <ArrowLeft className="w-5 h-5" />
                   </Button>
