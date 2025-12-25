@@ -242,7 +242,7 @@ function PagesContent() {
                             <Route path="/" element={<Dashboard />} />
                             <Route path="/Dashboard" element={<Dashboard />} />
                             <Route path="/Projects" element={<Projects />} />
-                        <Route path="/Businesses" element={<Businesses />} />
+                        <Route path="/Businesses" element={<Navigate to="/settings/organizations" replace />} />
                         <Route path="/Crew" element={<Crew />} />
                         <Route path="/Schedule" element={<Schedule />} />
                         <Route path="/Scripts" element={<Scripts />} />
