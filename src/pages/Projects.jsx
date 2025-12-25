@@ -134,7 +134,7 @@ export default function Projects() {
             <div className="flex flex-wrap gap-3">
               <Select value={filters.business} onValueChange={(v) => setFilters(prev => ({ ...prev, business: v }))}>
                 <SelectTrigger className="w-40 bg-white border-gray-300">
-                  <SelectValue placeholder="Business" />
+                  <SelectValue placeholder="Organisatie" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Alle Organisaties</SelectItem>

@@ -210,7 +210,7 @@ export default function Podcasts() {
           <div className="flex flex-wrap gap-3">
             <Select value={filters.business} onValueChange={(v) => setFilters(prev => ({ ...prev, business: v }))}>
               <SelectTrigger className="w-40 bg-[#1a1d21] border-gray-700 text-white">
-                <SelectValue placeholder="Business" />
+                <SelectValue placeholder="Organisatie" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Alle Organisaties</SelectItem>
@@ -357,7 +357,7 @@ export default function Podcasts() {
                 />
               </div>
               <div className="space-y-2">
-                <Label>Business *</Label>
+                <Label>Organisatie *</Label>
                 <Select 
                   value={formData.business_id} 
                   onValueChange={(v) => setFormData(prev => ({ ...prev, business_id: v }))}

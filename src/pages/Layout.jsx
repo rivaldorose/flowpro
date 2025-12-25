@@ -205,7 +205,7 @@ export default function Layout({ children, currentPageName }) {
               </SelectTrigger>
               <SelectContent>
                 {currentUser?.role === 'admin' && (
-                  <SelectItem value="all">Alle Businesses</SelectItem>
+                  <SelectItem value="all">Alle Organisaties</SelectItem>
                 )}
                 {accessibleBusinesses.map(b => (
                   <SelectItem key={b.id} value={b.id}>{b.name}</SelectItem>

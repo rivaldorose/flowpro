@@ -242,7 +242,7 @@ export default function ProjectDetail() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label>Business</Label>
+                    <Label>Organisatie</Label>
                     <Select 
                       value={editData.business_id} 
                       onValueChange={(v) => setEditData(prev => ({ ...prev, business_id: v }))}
